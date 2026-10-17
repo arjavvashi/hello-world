@@ -14,8 +14,10 @@ New File
 
 `game-night/index.html` is a single-page app for running a poker table and a FIFA tournament at the same time:
 
-- **Players**: add everyone, mark who's at poker and who's in FIFA (or both), or do a random 6/6 split.
-- **Poker**: blind clock with auto-rising levels, seat map with dealer button, buy-ins/rebuys, busts, tournament payouts or cash-game chip counts, and a "who pays whom" settle-up.
-- **FIFA**: round-robin league (once or home and away), league table, then semis + final or a straight final, with penalties for knockout draws.
+- **Login**: everyone taps their name (no password). Every buy-in and result records who entered it.
+- **Live FIFA**: anyone starts a match by picking the two players and their teams, enters goals live, and taps Full time. Matches count as group stage, knockout (with penalties) or friendly. Results can be edited or deleted.
+- **Poker**: one-tap buy-ins (standard or custom amount) with a timestamped log, then cash-outs at the end of the night and a "who pays whom" settle-up.
+- **Leaderboard**: a table for each group, knockout results, an overall FIFA table, and a poker table (buy-ins, paid in, net).
+- **Players & groups**: add players, create groups, and assign each player a group and usual team.
 
 Open the file in a browser to use it on one device (saved in that browser).

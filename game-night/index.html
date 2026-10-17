@@ -9,17 +9,17 @@
 /* Layout: sticky scoreboard header + tab bar, one column of panels; Poker = felt green, FIFA = floodlight blue */
 :root{
   --bg:#eceeea; --surface:#ffffff; --sunk:#f4f5f2; --ink:#141a19; --muted:#5b6662; --line:#d3d9d4;
-  --felt:#16694a; --felt-deep:#0f4f37; --on-felt:#f3fbf6; --pitch:#2f4fd6; --red:#bf3527; --gold:#b9861a; --ok:#1d7a4c;
+  --felt:#16694a; --felt-deep:#0f4f37; --on-felt:#f3fbf6; --pitch:#2f4fd6; --on-pitch:#ffffff; --red:#bf3527; --gold:#9a6f12; --ok:#1d7a4c;
   --display:"Big Shoulders Display", "Arial Narrow", Impact, sans-serif;
   --body:"Figtree", system-ui, -apple-system, "Segoe UI", sans-serif;
   --r:10px;
 }
 @media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
   --bg:#0e1211; --surface:#171d1c; --sunk:#121716; --ink:#e7ece9; --muted:#93a19b; --line:#2b3432;
-  --felt:#1f8a60; --felt-deep:#14583e; --on-felt:#f3fbf6; --pitch:#8293ff; --red:#ef6b5b; --gold:#e3b04a; --ok:#4fc78b; color-scheme:dark}}
+  --felt:#1f8a60; --felt-deep:#14583e; --on-felt:#f3fbf6; --pitch:#8293ff; --on-pitch:#0b1030; --red:#ef6b5b; --gold:#e3b04a; --ok:#4fc78b; color-scheme:dark}}
 :root[data-theme="dark"]{
   --bg:#0e1211; --surface:#171d1c; --sunk:#121716; --ink:#e7ece9; --muted:#93a19b; --line:#2b3432;
-  --felt:#1f8a60; --felt-deep:#14583e; --on-felt:#f3fbf6; --pitch:#8293ff; --red:#ef6b5b; --gold:#e3b04a; --ok:#4fc78b; color-scheme:dark}
+  --felt:#1f8a60; --felt-deep:#14583e; --on-felt:#f3fbf6; --pitch:#8293ff; --on-pitch:#0b1030; --red:#ef6b5b; --gold:#e3b04a; --ok:#4fc78b; color-scheme:dark}
 
 *{box-sizing:border-box}
 html,body{background:var(--bg)}
@@ -31,24 +31,27 @@ button,input,select{font:inherit;color:inherit}
 .wrap{max-width:860px;margin:0 auto;padding-block:0 48px}
 
 .top{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--bg);padding-block:12px 0}
-.bar{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.bar{display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap}
 .brand{font-family:var(--display);font-weight:800;font-size:28px;letter-spacing:.02em;text-transform:uppercase;line-height:1}
 .brand b{color:var(--red);font-weight:800}
-.sync{font-size:12px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;padding:4px 10px;border-radius:99px;border:1px solid var(--line);color:var(--muted);white-space:nowrap}
+.who{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.sync{font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:4px 8px;border-radius:99px;border:1px solid var(--line);color:var(--muted);white-space:nowrap}
 .sync.live{color:var(--ok);border-color:currentColor}
-.tabs{display:flex;gap:4px;margin-top:12px;border-bottom:1px solid var(--line);overflow-x:auto}
+.me{border:1px solid var(--line);background:var(--surface);border-radius:99px;padding:4px 10px;font-weight:700;font-size:13px;cursor:pointer;max-width:160px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tabs{display:flex;gap:2px;margin-top:12px;border-bottom:1px solid var(--line);overflow-x:auto}
 .tabs button{background:none;border:0;padding:10px 12px;font-weight:700;color:var(--muted);border-bottom:3px solid transparent;cursor:pointer;white-space:nowrap}
 .tabs button[aria-selected="true"]{color:var(--ink);border-color:var(--ink)}
-.tabs button:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid var(--pitch);outline-offset:2px}
+.tabs .dot{display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--red);margin-left:6px;vertical-align:middle}
+button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid var(--pitch);outline-offset:2px}
 
 main{display:grid;gap:16px;margin-top:16px}
 .panel{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:16px;min-width:0}
 .panel h2{font-family:var(--display);font-weight:800;font-size:22px;text-transform:uppercase;letter-spacing:.03em;margin:0 0 12px;line-height:1.1;text-wrap:balance;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
-.panel h3{font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin:16px 0 8px}
-.tag{font-family:var(--body);font-size:11px;font-weight:700;letter-spacing:.08em;padding:3px 8px;border-radius:99px;background:var(--sunk);color:var(--muted);border:1px solid var(--line)}
-.tag.poker{color:var(--felt);border-color:currentColor;background:none}
-.tag.fifa{color:var(--pitch);border-color:currentColor;background:none}
-.grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,320px),1fr));gap:16px}
+.panel h3{font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin:18px 0 6px}
+.tag{font-family:var(--body);font-size:11px;font-weight:700;letter-spacing:.08em;padding:3px 8px;border-radius:99px;color:var(--muted);border:1px solid var(--line)}
+.tag.poker{color:var(--felt);border-color:currentColor}
+.tag.fifa{color:var(--pitch);border-color:currentColor}
+.tag.live{color:var(--red);border-color:currentColor}
 .muted{color:var(--muted)}
 .small{font-size:13px}
 .row{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
@@ -59,103 +62,102 @@ main{display:grid;gap:16px;margin-top:16px}
 .btn:hover{background:var(--sunk)}
 .btn.primary{background:var(--ink);color:var(--bg);border-color:var(--ink)}
 .btn.felt{background:var(--felt);color:var(--on-felt);border-color:var(--felt)}
-.btn.pitch{background:var(--pitch);color:#fff;border-color:var(--pitch)}
+.btn.pitch{background:var(--pitch);color:var(--on-pitch);border-color:var(--pitch)}
 .btn.danger{color:var(--red)}
 .btn.armed{background:var(--red);color:#fff;border-color:var(--red)}
 .btn:disabled{opacity:.45;cursor:not-allowed}
 .btn.sm{padding:4px 10px;min-height:32px;font-size:13px}
-.step{display:inline-flex;align-items:center;border:1px solid var(--line);border-radius:8px;overflow:hidden}
-.step button{width:36px;height:36px;border:0;background:var(--sunk);font-size:18px;font-weight:700;cursor:pointer}
-.step span{min-width:34px;text-align:center;font-weight:700;font-variant-numeric:tabular-nums}
-input[type=text],input[type=number],select{border:1px solid var(--line);background:var(--sunk);border-radius:8px;padding:8px 10px;min-height:40px;min-width:0}
-label.f{display:grid;gap:4px;font-size:12px;font-weight:600;color:var(--muted);letter-spacing:.04em;text-transform:uppercase}
-.fields{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:12px}
+.btn.big{min-height:48px;padding:10px 18px;font-size:16px}
+.step{display:inline-flex;align-items:center;border:1px solid var(--line);border-radius:8px;overflow:hidden;background:var(--surface)}
+.step button{width:44px;height:44px;border:0;background:var(--sunk);font-size:20px;font-weight:700;cursor:pointer}
+.step span{min-width:36px;text-align:center;font-weight:800;font-variant-numeric:tabular-nums}
+input[type=text],input[type=number],select{border:1px solid var(--line);background:var(--sunk);border-radius:8px;padding:8px 10px;min-height:42px;min-width:0;width:100%}
+label.f{display:grid;gap:4px;font-size:12px;font-weight:600;color:var(--muted);letter-spacing:.04em;text-transform:uppercase;min-width:0}
+.fields{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px}
 
-/* blind clock */
-.clock{background:var(--felt-deep);color:var(--on-felt);border-radius:var(--r);padding:16px;display:grid;gap:6px;text-align:center}
-.clock .lvl{font-size:12px;letter-spacing:.14em;text-transform:uppercase;opacity:.8;font-weight:700}
-.clock .time{font-family:var(--display);font-weight:800;font-size:clamp(64px,18vw,112px);line-height:.9;font-variant-numeric:tabular-nums}
-.clock .blinds{font-family:var(--display);font-weight:600;font-size:30px;line-height:1}
-.clock .next{font-size:13px;opacity:.8}
-.clock.paused .time{opacity:.55}
-.clock .row{justify-content:center}
-.clock .btn{background:transparent;color:var(--on-felt);border-color:rgba(255,255,255,.35)}
-.clock .btn.go{background:var(--on-felt);color:var(--felt-deep);border-color:var(--on-felt)}
-
-/* table */
-.table-wrap{position:relative;width:100%;max-width:520px;margin:8px auto 4px;aspect-ratio:1.9;}
-.felt{position:absolute;inset:16% 10%;border-radius:999px;background:radial-gradient(ellipse at 50% 40%,var(--felt),var(--felt-deep));border:6px solid #5b3b22;display:grid;place-items:center;color:var(--on-felt);text-align:center}
-.felt .pot{font-family:var(--display);font-weight:800;font-size:26px;line-height:1}
-.felt .potl{font-size:11px;letter-spacing:.12em;text-transform:uppercase;opacity:.8}
-.seat{position:absolute;transform:translate(-50%,-50%);background:var(--surface);border:1px solid var(--line);border-radius:99px;padding:4px 10px;font-weight:700;font-size:13px;max-width:30%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:flex;gap:4px;align-items:center}
-.seat.out{opacity:.4;text-decoration:line-through}
-.seat .d{flex:none;width:18px;height:18px;border-radius:50%;background:var(--ink);color:var(--bg);font-size:11px;display:grid;place-items:center;text-decoration:none}
-
+/* poker */
+.pot{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;background:var(--felt-deep);color:var(--on-felt);border-radius:var(--r);padding:14px;text-align:center}
+.pot b{display:block;font-family:var(--display);font-weight:800;font-size:clamp(26px,8vw,40px);line-height:1;font-variant-numeric:tabular-nums}
+.pot span{font-size:11px;letter-spacing:.1em;text-transform:uppercase;opacity:.8}
 .list{display:grid}
 .li{display:flex;align-items:center;gap:10px;padding:10px 0;border-top:1px solid var(--line);flex-wrap:wrap}
 .li:first-child{border-top:0}
 .li .name{flex:1 1 120px;min-width:0;font-weight:700;overflow-wrap:anywhere}
-.li.out .name{color:var(--muted);text-decoration:line-through}
-.place{font-family:var(--display);font-weight:800;font-size:20px;min-width:34px}
+.li .name small{display:block;font-weight:400;color:var(--muted);font-size:12px}
+.chips{display:inline-flex;gap:3px;flex-wrap:wrap;max-width:120px}
+.chip{width:12px;height:12px;border-radius:50%;background:var(--felt);border:2px dashed var(--on-felt);box-shadow:0 0 0 1px var(--felt)}
 .money{font-weight:700;font-variant-numeric:tabular-nums}
 .pos{color:var(--ok)} .neg{color:var(--red)}
+.place{font-family:var(--display);font-weight:800;font-size:20px;min-width:28px}
 
 /* fifa */
-.pitchcard{border-radius:var(--r);padding:16px;background:var(--sunk);border:1px solid var(--line);display:grid;gap:12px}
-.vs{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:8px;text-align:center}
-.vs .pl{font-weight:700;overflow-wrap:anywhere;min-width:0}
-.vs .pl small{display:block;font-weight:400;color:var(--muted);font-size:12px}
-.score{font-family:var(--display);font-weight:800;font-size:56px;line-height:1;font-variant-numeric:tabular-nums;white-space:nowrap}
-.score.sm{font-size:28px}
-.vs .step{margin-top:6px}
+.match{border-radius:var(--r);padding:14px;background:var(--sunk);border:1px solid var(--line);display:grid;gap:12px}
+.match.live{border-color:var(--pitch);box-shadow:inset 0 0 0 1px var(--pitch)}
 .stage{font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--pitch);text-align:center}
+.stage .livedot{display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--red);margin-right:6px;vertical-align:1px}
+@media (prefers-reduced-motion:no-preference){.stage .livedot{animation:pulse 1.4s infinite}}
+@keyframes pulse{50%{opacity:.3}}
+.vs{display:grid;grid-template-columns:1fr auto 1fr;align-items:start;gap:8px;text-align:center}
+.vs .pl{font-weight:800;overflow-wrap:anywhere;min-width:0;display:grid;gap:6px;justify-items:center}
+.vs .pl small{display:block;font-weight:600;color:var(--muted);font-size:13px}
+.score{font-family:var(--display);font-weight:800;font-size:56px;line-height:1;font-variant-numeric:tabular-nums;white-space:nowrap;padding-top:4px}
 .tbl{overflow-x:auto}
 .tbl table{width:100%;border-collapse:collapse;font-variant-numeric:tabular-nums}
-.tbl th{font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);font-weight:700;text-align:right;padding:6px 6px;border-bottom:1px solid var(--line)}
-.tbl td{text-align:right;padding:8px 6px;border-bottom:1px solid var(--line)}
-.tbl th:nth-child(2),.tbl td:nth-child(2){text-align:left}
-.tbl td:nth-child(2){font-weight:700}
-.tbl tr.q td:first-child{color:var(--pitch);font-weight:800}
-.mrow{display:grid;grid-template-columns:1fr auto 1fr auto;align-items:center;gap:8px;padding:8px 0;border-top:1px solid var(--line)}
+.tbl th{font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);font-weight:700;text-align:right;padding:6px;border-bottom:1px solid var(--line);white-space:nowrap}
+.tbl td{text-align:right;padding:8px 6px;border-bottom:1px solid var(--line);white-space:nowrap}
+.tbl th:nth-child(2),.tbl td:nth-child(2){text-align:left;white-space:normal}
+.tbl td:nth-child(2){font-weight:700;min-width:110px}
+@media (max-width:460px){.tbl .wide{display:none}}
+.tbl tr.top1 td:first-child{color:var(--gold);font-weight:800}
+.mrow{display:grid;grid-template-columns:1fr auto 1fr auto;align-items:center;gap:8px;padding:10px 0;border-top:1px solid var(--line)}
 .mrow:first-child{border-top:0}
 .mrow .a{text-align:right;font-weight:600;overflow-wrap:anywhere;min-width:0}
 .mrow .b{font-weight:600;overflow-wrap:anywhere;min-width:0}
-.mrow .s{font-variant-numeric:tabular-nums;font-weight:800;min-width:48px;text-align:center}
-.mrow .w{color:var(--ink)} .mrow .l{color:var(--muted);font-weight:400}
-.mrow.now{background:color-mix(in srgb,var(--pitch) 10%,transparent);border-radius:6px}
-.champ{font-family:var(--display);font-weight:800;font-size:30px;color:var(--gold);text-transform:uppercase;text-align:center;line-height:1.1}
-details summary{cursor:pointer;font-weight:700;padding:4px 0}
+.mrow small{display:block;font-weight:400;color:var(--muted);font-size:12px}
+.mrow .s{font-variant-numeric:tabular-nums;font-weight:800;min-width:52px;text-align:center}
+.mrow .w{color:var(--ink)} .mrow .l{color:var(--muted)}
+.mrow .meta{grid-column:1/-1;font-size:12px;color:var(--muted);text-align:center;margin-top:-4px}
+.startgrid{display:grid;grid-template-columns:1fr auto 1fr;gap:10px;align-items:end}
+.startgrid .side{display:grid;gap:8px;min-width:0}
+.startgrid .v{font-family:var(--display);font-weight:800;font-size:22px;color:var(--muted);padding-bottom:10px}
+@media (max-width:460px){.startgrid{grid-template-columns:1fr}.startgrid .v{padding:0;text-align:center}}
 
 .toggle{border:1px solid var(--line);background:var(--surface);border-radius:99px;padding:6px 12px;font-weight:700;font-size:13px;cursor:pointer;min-height:34px;color:var(--muted)}
 .toggle.on.p{background:var(--felt);border-color:var(--felt);color:var(--on-felt)}
-.toggle.on.f{background:var(--pitch);border-color:var(--pitch);color:#fff}
-.prow{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr) auto auto auto;gap:8px;align-items:center;padding:6px 0;border-top:1px solid var(--line)}
+.toggle.on.f{background:var(--pitch);border-color:var(--pitch);color:var(--on-pitch)}
+.prow{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(0,1fr) minmax(0,.9fr) auto auto auto;gap:8px;align-items:center;padding:8px 0;border-top:1px solid var(--line)}
 .prow:first-child{border-top:0}
-.x{border:0;background:none;color:var(--muted);font-size:20px;cursor:pointer;width:32px;height:32px}
-@media (max-width:560px){
-  .prow{grid-template-columns:minmax(0,1fr) auto auto auto}
-  .prow .team{grid-column:1/-1;grid-row:2}
+.x{border:0;background:none;color:var(--muted);font-size:22px;cursor:pointer;width:34px;height:34px}
+@media (max-width:620px){
+  .prow{grid-template-columns:minmax(0,1fr) minmax(0,1fr) auto}
+  .prow .pn{grid-column:1/3}
+  .prow .x{grid-column:3;grid-row:1}
 }
+.grow{display:grid;grid-template-columns:1fr auto;gap:8px;align-items:center;padding:6px 0}
 .notice{border:1px dashed var(--line);border-radius:var(--r);padding:12px;font-size:14px}
-.notice.warn{border-color:var(--gold)}
-.empty{text-align:center;padding:28px 16px;display:grid;gap:12px;justify-items:center}
-.empty .big{font-family:var(--display);font-weight:800;font-size:34px;text-transform:uppercase;line-height:1}
+.notice.warn{border-color:var(--gold);color:var(--ink)}
+.login{display:grid;gap:16px;padding-block:8px}
+.login .big{font-family:var(--display);font-weight:800;font-size:40px;text-transform:uppercase;line-height:1}
+.names{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:8px}
+.names button{min-height:54px;border-radius:var(--r);border:1px solid var(--line);background:var(--surface);font-weight:700;font-size:16px;cursor:pointer;overflow-wrap:anywhere;padding:6px}
+.names button:hover{border-color:var(--ink)}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:8px;overflow:hidden}
+.seg button{border:0;background:var(--surface);padding:8px 14px;font-weight:700;cursor:pointer;color:var(--muted)}
+.seg button[aria-pressed="true"]{background:var(--ink);color:var(--bg)}
 .toast{position:fixed;left:50%;bottom:calc(16px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:8px;font-weight:600;font-size:14px;z-index:20;max-width:calc(100% - 32px)}
-@media (prefers-reduced-motion:no-preference){.clock.ending .time{animation:pulse 1s infinite}}
-@keyframes pulse{50%{opacity:.5}}
 </style>
 
 <div class="wrap">
   <header class="top">
     <div class="bar">
       <div class="brand">Game <b>♠︎</b> Night</div>
-      <span class="sync" id="sync">Connecting…</span>
+      <div class="who"><span class="sync" id="sync">Connecting…</span><button class="me" id="me-btn" data-act="logout" hidden></button></div>
     </div>
     <nav class="tabs" role="tablist" id="tabs">
-      <button role="tab" data-tab="tonight" id="tab-tonight">Tonight</button>
+      <button role="tab" data-tab="live" id="tab-live">Live FIFA</button>
       <button role="tab" data-tab="poker" id="tab-poker">Poker</button>
-      <button role="tab" data-tab="fifa" id="tab-fifa">FIFA</button>
-      <button role="tab" data-tab="players" id="tab-players">Players</button>
+      <button role="tab" data-tab="board" id="tab-board">Leaderboard</button>
+      <button role="tab" data-tab="setup" id="tab-setup">Players &amp; groups</button>
     </nav>
   </header>
   <main id="app"></main>
@@ -164,102 +166,71 @@ details summary{cursor:pointer;font-weight:700;padding:4px 0}
 <script>
 (() => {
 "use strict";
-/* ---------- state ---------- */
-const DOCS = ["players", "poker", "fifa"];
-const DEF = {
-  players: () => ({ list: [] }),
-  poker: () => ({ mode: "tournament", currency: "$", buyIn: 20, chips: 10000, payout: "65/35",
-    seats: [], dealer: 0, entries: {}, bust: [],
-    timer: { running: false, startedAt: 0, elapsed: 0, minutes: 15 } }),
-  fifa: () => ({ legs: 1, playoff: "semis", minutes: 12, matches: [], roster: [] })
-};
-let S = { players: DEF.players(), poker: DEF.poker(), fifa: DEF.fifa() };
+/* ---------- store: one record per player, group, buy-in, cash-out and match ---------- */
+const COLS = ["players", "groups", "buyins", "cashouts", "matches", "settings"];
+let D = {}; COLS.forEach(c => { D[c] = {}; });
 let db = null, live = false, ready = false;
-const inflight = {}, dirty = {}, soon = {};
-const ui = { tab: "tonight", openMatch: null, armed: null };
+const Q = {}; // pending writes per record: {running, next, local}
+const TYPING = {}; // records being typed into, not yet saved
 
-try { const t = localStorage.getItem("gn-tab"); if (t) ui.tab = t; } catch (e) {}
-if (/^#(tonight|poker|fifa|players)$/.test(location.hash)) ui.tab = location.hash.slice(1);
+function persistLocal() { try { localStorage.setItem("gamenight2", JSON.stringify(D)); } catch (e) {} }
+function loadLocal() { try { const j = JSON.parse(localStorage.getItem("gamenight2") || "null"); if (j) COLS.forEach(c => { if (j[c]) D[c] = j[c]; }); } catch (e) {} }
 
-function normalize(k, d) { const base = DEF[k](); const o = Object.assign(base, d || {});
-  if (k === "poker") o.timer = Object.assign(DEF.poker().timer, (d && d.timer) || {});
-  return o; }
-function loadLocal() { try { const j = JSON.parse(localStorage.getItem("gamenight") || "null");
-  if (j) DOCS.forEach(k => { if (j[k]) S[k] = normalize(k, j[k]); }); } catch (e) {} }
-function saveLocal() { try { localStorage.setItem("gamenight", JSON.stringify(S)); } catch (e) {} }
-
-async function commit(k) {
-  clearTimeout(soon[k]); soon[k] = null;
+function save(col, id, doc) { // full-record write (doc = null deletes)
+  if (doc) D[col][id] = doc; else delete D[col][id];
   render();
-  if (!db) { saveLocal(); return; }
-  dirty[k] = true;
-  if (inflight[k]) return;
-  while (dirty[k]) {
-    dirty[k] = false; inflight[k] = true;
-    try { await db.doc("night/" + k).set(JSON.parse(JSON.stringify(S[k]))); }
-    catch (e) { toast(e && e.code === "permission_denied" ? "You can view but not edit. Ask the host for edit access." : "Couldn't save. Check your connection."); }
-    inflight[k] = false;
-  }
+  if (!db) { persistLocal(); return; }
+  const k = col + "/" + id, e = Q[k] || (Q[k] = { running: false, next: undefined, local: undefined });
+  e.next = doc; e.local = doc; pump(k, col, id);
 }
-function commitSoon(k) { clearTimeout(soon[k]); soon[k] = setTimeout(() => commit(k), 500); }
-
+async function pump(k, col, id) {
+  const e = Q[k]; if (e.running) return;
+  while (e.next !== undefined) {
+    const doc = e.next; e.next = undefined; e.running = true;
+    try { const ref = db.collection(col).doc(id); if (doc) await ref.set(JSON.parse(JSON.stringify(doc))); else await ref.delete(); }
+    catch (err) { toast(err && (err.code === "permission_denied" || err.code === "not_granted") ? "You can view but not edit. Ask the host to share edit access." : err && err.code === "quota_exceeded" ? "Storage is full. Clear old results in Players & groups." : "Couldn't save. Check your connection and try again."); }
+    e.running = false;
+  }
+  delete Q[k];
+}
 function subscribe() {
-  DOCS.forEach(k => {
-    db.doc("night/" + k).onSnapshot(snap => {
-      if (inflight[k] || dirty[k] || soon[k]) return;
-      S[k] = normalize(k, snap.exists ? snap.data() : null);
-      render();
-    }, () => { live = false; render(); });
-  });
+  COLS.forEach(c => db.collection(c).onSnapshot(snap => {
+    const m = {}; snap.docs.forEach(d => { m[d.id] = d.data(); });
+    Object.keys(Q).forEach(k => { const [cc, id] = k.split("/"); if (cc !== c) return; const e = Q[k]; if (e.local) m[id] = e.local; else delete m[id]; });
+    Object.keys(TYPING).forEach(k => { const [cc, id] = k.split("/"); if (cc === c && m[id]) m[id] = TYPING[k]; });
+    D[c] = m; if (c === "players") ready = true; render();
+  }, () => { live = false; render(); }));
 }
 
 /* ---------- helpers ---------- */
 const esc = s => String(s == null ? "" : s).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
-const uid = () => Math.random().toString(36).slice(2, 9);
-const shuffle = a => { a = a.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
-const P = () => S.players.list;
-const byId = id => P().find(p => p.id === id);
-const nm = id => { const p = byId(id); return p ? (p.name || "Unnamed") : "Removed player"; };
-const team = id => { const p = byId(id); return p && p.team ? p.team : ""; };
-const money = v => { const c = S.poker.currency || ""; const n = Math.round(v * 100) / 100;
-  const s = Math.abs(n).toFixed(n % 1 ? 2 : 0); return (n < 0 ? "−" : "") + c + s; };
+const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
+const rows = c => Object.keys(D[c]).map(id => Object.assign({}, D[c][id], { id }));
+const byAt = (a, b) => (a.at || 0) - (b.at || 0) || a.id.localeCompare(b.id);
+const P = () => rows("players").sort(byAt);
+const G = () => rows("groups").sort(byAt);
+const player = id => D.players[id];
+const nm = id => { const p = player(id); return p ? (p.name || "Unnamed") : "Removed player"; };
+const groupOf = id => { const p = player(id); return p && p.group && D.groups[p.group] ? p.group : ""; };
+const gname = gid => (D.groups[gid] && D.groups[gid].name) || "Group";
+const settings = () => Object.assign({ currency: "$", buyIn: 20 }, D.settings.main || {});
+const money = v => { const n = Math.round(v * 100) / 100; return (n < 0 ? "−" : "") + settings().currency + Math.abs(n).toFixed(n % 1 ? 2 : 0); };
+const clock = t => t ? new Date(t).toLocaleTimeString([], { hour: "numeric", minute: "2-digit" }) : "";
+const ordinal = n => n + (n % 10 === 1 && n % 100 !== 11 ? "st" : n % 10 === 2 && n % 100 !== 12 ? "nd" : n % 10 === 3 && n % 100 !== 13 ? "rd" : "th");
+
+/* identity: pick your name, remembered on this device */
+const ui = { tab: "live", armed: null, edit: null, board: "fifa", form: { a: "", b: "", teamA: "", teamB: "", stage: "group", round: "Semi-final" }, custom: {} };
+let me = null;
+try { me = localStorage.getItem("gn-me"); const t = localStorage.getItem("gn-tab2"); if (t) ui.tab = t; } catch (e) {}
+if (/^#(live|poker|board|setup)$/.test(location.hash)) ui.tab = location.hash.slice(1);
+const setMe = id => { me = id; try { id ? localStorage.setItem("gn-me", id) : localStorage.removeItem("gn-me"); } catch (e) {} render(); };
 
 /* poker */
-const pokerIds = () => P().filter(p => p.poker).map(p => p.id);
-function seatOrder() { const ids = pokerIds(); const s = S.poker.seats.filter(i => ids.includes(i));
-  ids.forEach(i => { if (!s.includes(i)) s.push(i); }); return s; }
-const entry = id => Object.assign({ buyIns: 1, cashOut: null }, S.poker.entries[id] || {});
-const busted = () => S.poker.bust.filter(i => pokerIds().includes(i));
-const alive = () => seatOrder().filter(i => !busted().includes(i));
-const pot = () => seatOrder().reduce((t, i) => t + entry(i).buyIns * S.poker.buyIn, 0);
-const split = () => S.poker.payout.split("/").map(Number);
-function niceBase(chips) { const x = chips / 200; const c = [1, 2, 5, 10, 25, 50, 100, 200, 250, 500, 1000, 2500, 5000];
-  let b = 1; c.forEach(v => { if (v <= x) b = v; }); return b; }
-const MULT = [1, 2, 3, 4, 6, 8, 10, 15, 20, 30, 40, 60, 80, 100, 150, 200];
-function blinds(l) { const b = niceBase(S.poker.chips); const m = l < MULT.length ? MULT[l] : MULT[MULT.length - 1] * Math.pow(1.5, l - MULT.length + 1);
-  const sb = Math.round(m * b / b) * b; return [sb, sb * 2]; }
-const levelMs = () => Math.max(1, S.poker.timer.minutes) * 60000;
-const tElapsed = () => { const t = S.poker.timer; return t.elapsed + (t.running ? Math.max(0, Date.now() - t.startedAt) : 0); };
-const fmtT = ms => { const s = Math.max(0, Math.ceil(ms / 1000)); return Math.floor(s / 60) + ":" + String(s % 60).padStart(2, "0"); };
-const fmtN = n => n.toLocaleString();
-
-function places() { // id -> place (1 = winner), only for decided spots
-  const seats = seatOrder(), b = busted(), out = {}; const n = seats.length;
-  b.forEach((id, j) => { out[id] = n - j; });
-  const a = alive(); if (a.length === 1 && n > 1) out[a[0]] = 1;
-  return out; }
-function nets() { // [{id, net}] or null when not settled yet
-  const seats = seatOrder(); if (!seats.length) return null;
-  const pk = S.poker;
-  if (pk.mode === "cash") {
-    if (seats.some(i => entry(i).cashOut == null || entry(i).cashOut === "")) return null;
-    const val = pk.buyIn / pk.chips;
-    return seats.map(i => ({ id: i, net: Number(entry(i).cashOut) * val - entry(i).buyIns * pk.buyIn }));
-  }
-  if (alive().length > 1) return null;
-  const pl = places(), sp = split(), pool = pot();
-  return seats.map(i => ({ id: i, net: (sp[pl[i] - 1] ? pool * sp[pl[i] - 1] / 100 : 0) - entry(i).buyIns * pk.buyIn }));
-}
+const buyins = () => rows("buyins").sort(byAt);
+const pokerIds = () => { const ids = P().filter(p => p.poker).map(p => p.id); buyins().forEach(b => { if (!ids.includes(b.player)) ids.push(b.player); }); return ids; };
+const paidIn = id => buyins().filter(b => b.player === id).reduce((t, b) => t + (Number(b.amount) || 0), 0);
+const countIn = id => buyins().filter(b => b.player === id).length;
+const cashOut = id => D.cashouts[id] ? Number(D.cashouts[id].amount) : null;
 function settle(list) {
   const cr = list.filter(n => n.net > 0.005).map(n => ({ id: n.id, v: n.net })).sort((a, b) => b.v - a.v);
   const dr = list.filter(n => n.net < -0.005).map(n => ({ id: n.id, v: -n.net })).sort((a, b) => b.v - a.v);
@@ -267,309 +238,245 @@ function settle(list) {
   while (i < dr.length && j < cr.length) { const v = Math.min(dr[i].v, cr[j].v);
     out.push({ from: dr[i].id, to: cr[j].id, v }); dr[i].v -= v; cr[j].v -= v;
     if (dr[i].v < 0.005) i++; if (cr[j].v < 0.005) j++; }
-  return out; }
+  return out;
+}
 
 /* fifa */
-const fifaIds = () => P().filter(p => p.fifa).map(p => p.id);
-function roundRobin(ids, legs) {
-  const a = shuffle(ids); if (a.length % 2) a.push(null);
-  const n = a.length, rounds = [];
-  for (let r = 0; r < n - 1; r++) { const ms = [];
-    for (let i = 0; i < n / 2; i++) { const x = a[i], y = a[n - 1 - i]; if (x && y) ms.push(r % 2 ? [y, x] : [x, y]); }
-    rounds.push(ms); a.splice(1, 0, a.pop()); }
-  let all = rounds.flat(); if (legs === 2) all = all.concat(rounds.flat().map(([x, y]) => [y, x]));
-  // order so nobody plays twice in a row and games stay even
-  const left = all.slice(), out = [], played = {}; let prev = [];
-  while (left.length) { let best = 0, sc = Infinity;
-    left.forEach((m, i) => { const s = (prev.includes(m[0]) || prev.includes(m[1]) ? 1000 : 0) + (played[m[0]] || 0) + (played[m[1]] || 0) + i * 0.001;
-      if (s < sc) { sc = s; best = i; } });
-    const m = left.splice(best, 1)[0]; out.push(m); played[m[0]] = (played[m[0]] || 0) + 1; played[m[1]] = (played[m[1]] || 0) + 1; prev = m; }
-  return out.map(([x, y]) => ({ id: uid(), stage: "league", a: x, b: y, ga: 0, gb: 0, done: false, pens: null }));
-}
-const M = () => S.fifa.matches;
-function standings() {
-  const t = {}; S.fifa.roster.forEach(id => { t[id] = { id, p: 0, w: 0, d: 0, l: 0, gf: 0, ga: 0, pts: 0 }; });
-  M().filter(m => m.stage === "league" && m.done).forEach(m => {
-    const A = t[m.a], B = t[m.b]; if (!A || !B) return;
+const matches = () => rows("matches").sort(byAt);
+const liveMatches = () => matches().filter(m => m.status === "live");
+const doneMatches = () => matches().filter(m => m.status === "done");
+const winner = m => m.ga > m.gb ? m.a : m.gb > m.ga ? m.b : (m.pens || null);
+const stageLabel = m => m.stage === "group" ? (sameGroup(m) ? gname(groupOf(m.a)) : "Group stage") : m.stage === "knockout" ? (m.round || "Knockout") : "Friendly";
+const sameGroup = m => groupOf(m.a) && groupOf(m.a) === groupOf(m.b);
+const busy = id => liveMatches().some(m => m.a === id || m.b === id);
+function table(ms, ids) {
+  const t = {}; const row = id => t[id] || (t[id] = { id, p: 0, w: 0, d: 0, l: 0, gf: 0, ga: 0, pts: 0 });
+  ids.forEach(row);
+  ms.forEach(m => { const A = row(m.a), B = row(m.b);
     A.p++; B.p++; A.gf += m.ga; A.ga += m.gb; B.gf += m.gb; B.ga += m.ga;
     if (m.ga > m.gb) { A.w++; B.l++; A.pts += 3; } else if (m.gb > m.ga) { B.w++; A.l++; B.pts += 3; } else { A.d++; B.d++; A.pts++; B.pts++; } });
   return Object.values(t).sort((x, y) => y.pts - x.pts || (y.gf - y.ga) - (x.gf - x.ga) || y.gf - x.gf || nm(x.id).localeCompare(nm(y.id)));
 }
-const winner = m => m.ga > m.gb ? m.a : m.gb > m.ga ? m.b : m.pens;
-const loser = m => winner(m) === m.a ? m.b : m.a;
-const current = () => M().find(m => !m.done);
-function champion() {
-  const f = M().find(m => m.stage === "final" && m.done); if (f) return winner(f);
-  const L = M().filter(m => m.stage === "league");
-  if (S.fifa.playoff === "none" && L.length && L.every(m => m.done)) return standings()[0].id;
-  return null; }
-function advance() {
-  const f = S.fifa, L = M().filter(m => m.stage === "league");
-  if (!L.length || !L.every(m => m.done)) return;
-  const st = standings(), add = (stage, a, b) => f.matches.push({ id: uid(), stage, a, b, ga: 0, gb: 0, done: false, pens: null });
-  const has = s => M().some(m => m.stage === s);
-  if (f.playoff === "semis" && st.length >= 4 && !has("semi")) { add("semi", st[0].id, st[3].id); add("semi", st[1].id, st[2].id); }
-  if (f.playoff === "final" && st.length >= 2 && !has("final")) add("final", st[0].id, st[1].id);
-  const se = M().filter(m => m.stage === "semi");
-  if (se.length === 2 && se.every(m => m.done) && !has("final")) add("final", winner(se[0]), winner(se[1]));
-}
-const stageName = m => m.stage === "league" ? "League" : m.stage === "semi" ? "Semi-final" : "Final";
-const sameSet = (a, b) => a.length === b.length && a.every(x => b.includes(x));
 
 /* ---------- views ---------- */
-function confirmBtn(key, label, cls) { const on = ui.armed === key;
-  return `<button class="btn ${cls || ""} ${on ? "armed" : ""}" data-act="confirm" data-key="${key}" id="c-${key}">${on ? "Tap again to confirm" : label}</button>`; }
+const confirmBtn = (key, label, cls) => { const on = ui.armed === key;
+  return `<button class="btn ${cls || ""} ${on ? "armed" : ""}" data-act="confirm" data-key="${esc(key)}" id="c-${esc(key)}">${on ? "Tap again to confirm" : label}</button>`; };
+const opts = (list, sel, blank) => (blank ? `<option value="">${blank}</option>` : "") + list.map(p => `<option value="${p.id}" ${p.id === sel ? "selected" : ""}>${esc(p.name || "Unnamed")}${busy(p.id) ? " (playing)" : ""}</option>`).join("");
 
-function clockHTML(compact) {
-  const pk = S.poker, el = tElapsed(), lm = levelMs(), lvl = Math.floor(el / lm), rem = lm - (el % lm);
-  const [sb, bb] = blinds(lvl), [ns, nb] = blinds(lvl + 1);
-  const ending = pk.timer.running && rem < 60000;
-  return `<div class="clock ${pk.timer.running ? "" : "paused"} ${ending ? "ending" : ""}" data-clock>
-    <div class="lvl" data-lvl>Level ${lvl + 1}${pk.timer.running ? "" : el ? " · paused" : " · not started"}</div>
-    <div class="time" data-time>${fmtT(rem)}</div>
-    <div class="blinds num" data-blinds>${fmtN(sb)} / ${fmtN(bb)}</div>
-    <div class="next" data-next>Next: ${fmtN(ns)} / ${fmtN(nb)}</div>
-    ${compact ? "" : `<div class="row" style="margin-top:8px">
-      <button class="btn" data-act="lvl-prev" id="lvl-prev" aria-label="Previous level">◀ Level</button>
-      <button class="btn go" data-act="timer" id="timer-go">${pk.timer.running ? "Pause" : el ? "Resume" : "Start clock"}</button>
-      <button class="btn" data-act="lvl-next" id="lvl-next" aria-label="Next level">Level ▶</button>
-    </div>`}
-  </div>`;
-}
-
-function tableHTML() {
-  const seats = seatOrder(); if (!seats.length) return "";
-  const b = busted(), n = seats.length, d = seats[S.poker.dealer % n];
-  const pos = seats.map((id, i) => { const ang = Math.PI / 2 + (i / n) * Math.PI * 2;
-    return `<div class="seat ${b.includes(id) ? "out" : ""}" style="left:${50 + 44 * Math.cos(ang)}%;top:${50 + 42 * Math.sin(ang)}%">${id === d ? '<span class="d" title="Dealer">D</span>' : ""}${esc(nm(id))}</div>`; }).join("");
-  return `<div class="table-wrap"><div class="felt"><div><div class="pot">${money(pot())}</div><div class="potl">${S.poker.mode === "cash" ? "bought in" : "prize pool"}</div></div></div>${pos}</div>`;
-}
-
-function emptyPlayers() {
-  return `<section class="panel"><div class="empty">
-    <div class="big">Who's playing?</div>
-    <p class="muted" style="margin:0;max-width:40ch">Add tonight's players, then split them between the poker table and the FIFA tournament.</p>
-    <div class="row" style="justify-content:center">
-      <button class="btn primary" data-act="go" data-tab="players" id="e-add">Add players</button>
-      <button class="btn" data-act="quickfill" id="e-fill">Use Player 1–12</button>
-    </div></div></section>`;
-}
-
-function viewTonight() {
-  if (!P().length) return emptyPlayers();
-  const seats = seatOrder(), a = alive(), cur = current(), ch = champion();
-  const st = S.fifa.roster.length ? standings() : [];
-  const next = M().filter(m => !m.done).slice(1, 3);
-  const pl = places(); const winnerId = a.length === 1 && seats.length > 1 && S.poker.mode === "tournament" ? a[0] : null;
-  return `<div class="grid2">
-  <section class="panel"><h2>Poker <span class="tag poker">${seats.length} seats</span></h2>
-    ${seats.length ? clockHTML(true) : `<p class="muted">Nobody is marked for poker yet.</p>`}
-    ${seats.length ? `<div class="spread" style="margin-top:12px"><span><b class="num">${S.poker.mode === "cash" ? seats.length : a.length}</b> <span class="muted">${S.poker.mode === "cash" ? "at the table" : "of " + seats.length + " still in"}</span></span><span><span class="muted">${S.poker.mode === "cash" ? "In play" : "Pool"}</span> <b class="money">${money(pot())}</b></span></div>` : ""}
-    ${winnerId ? `<div class="champ" style="margin-top:12px">${esc(nm(winnerId))} wins</div>` : ""}
-    <div class="row" style="margin-top:12px"><button class="btn" data-act="go" data-tab="poker" id="t-poker">Open table</button></div>
-  </section>
-  <section class="panel"><h2>FIFA <span class="tag fifa">${S.fifa.roster.length} players</span></h2>
-    ${!M().length ? `<p class="muted">No schedule yet. Generate one in the FIFA tab.</p>` : ""}
-    ${ch ? `<div class="champ">🏆︎ ${esc(nm(ch))}</div><p class="muted small" style="text-align:center;margin:4px 0 0">Tournament champion</p>` : ""}
-    ${cur ? `<div class="pitchcard"><div class="stage">On now · ${stageName(cur)}</div>
-      <div class="vs"><div class="pl">${esc(nm(cur.a))}<small>${esc(team(cur.a))}</small></div><div class="score">${cur.ga}–${cur.gb}</div><div class="pl">${esc(nm(cur.b))}<small>${esc(team(cur.b))}</small></div></div></div>` : ""}
-    ${next.length ? `<h3>Up next</h3><div class="list">${next.map(m => `<div class="li"><span class="name">${esc(nm(m.a))} <span class="muted">v</span> ${esc(nm(m.b))}</span><span class="muted small">${stageName(m)}</span></div>`).join("")}</div>` : ""}
-    ${st.length && st[0].p ? `<h3>Top of the table</h3><div class="list">${st.slice(0, 3).map((r, i) => `<div class="li"><span class="place">${i + 1}</span><span class="name">${esc(nm(r.id))}</span><b class="num">${r.pts} pts</b></div>`).join("")}</div>` : ""}
-    <div class="row" style="margin-top:12px"><button class="btn" data-act="go" data-tab="fifa" id="t-fifa">Open tournament</button></div>
-  </section></div>`;
-}
-
-function viewPoker() {
-  if (!P().length) return emptyPlayers();
-  const pk = S.poker, seats = seatOrder(), b = busted(), a = alive(), cash = pk.mode === "cash";
-  if (!seats.length) return `<section class="panel"><h2>Poker</h2><p class="muted">Mark who's at the table in the Players tab.</p><button class="btn" data-act="go" data-tab="players" id="p-go">Go to Players</button></section>`;
-  const pl = places(), sp = split(), pool = pot(), ns = nets();
-  const chipTotal = seats.reduce((t, i) => t + entry(i).buyIns * pk.chips, 0);
-  const counted = seats.reduce((t, i) => t + (Number(entry(i).cashOut) || 0), 0);
-  const rows = seats.map(id => { const e = entry(id), out = b.includes(id);
-    return `<div class="li ${out ? "out" : ""}">
-      ${!cash ? `<span class="place">${pl[id] ? ordinal(pl[id]) : ""}</span>` : ""}
-      <span class="name">${esc(nm(id))}</span>
-      <span class="row small"><span class="muted">Buy-ins</span><span class="step"><button data-act="buyin" data-id="${id}" data-d="-1" aria-label="Remove buy-in">−</button><span>${e.buyIns}</span><button data-act="buyin" data-id="${id}" data-d="1" aria-label="Add buy-in">+</button></span></span>
-      ${cash ? `<input type="number" inputmode="numeric" min="0" placeholder="Chips at end" id="co-${id}" data-input="cashout" data-id="${id}" value="${e.cashOut == null ? "" : esc(e.cashOut)}" style="width:130px">`
-        : out ? `<button class="btn sm" data-act="unbust" data-id="${id}" id="ub-${id}">Undo bust</button>`
-        : a.length > 1 ? `<button class="btn sm danger" data-act="bust" data-id="${id}" id="bu-${id}">Busted</button>` : `<span class="tag poker">Winner</span>`}
-    </div>`; }).join("");
-  const results = ns ? `<h3>Results</h3><div class="list">${ns.slice().sort((x, y) => y.net - x.net).map(n => `<div class="li"><span class="name">${esc(nm(n.id))}</span><span class="money ${n.net > 0.005 ? "pos" : n.net < -0.005 ? "neg" : ""}">${n.net > 0.005 ? "+" : ""}${money(n.net)}</span></div>`).join("")}</div>
-    <h3>Settle up</h3>${(() => { const s = settle(ns); return s.length ? `<div class="list">${s.map(t => `<div class="li"><span class="name">${esc(nm(t.from))} <span class="muted">pays</span> ${esc(nm(t.to))}</span><b class="money">${money(t.v)}</b></div>`).join("")}</div>` : `<p class="muted">Everyone's square.</p>`; })()}` : "";
-  return `
-  <section class="panel"><h2>Blind clock <span class="tag poker">${pk.timer.minutes} min levels</span></h2>${clockHTML(false)}
-    <div class="row small muted" style="margin-top:10px;justify-content:center">Starting stack ${fmtN(pk.chips)} · blinds rise every ${pk.timer.minutes} min</div>
-  </section>
-  <section class="panel"><h2>The table <span class="tag poker">${cash ? "Cash game" : a.length + " of " + seats.length + " left"}</span></h2>
-    ${tableHTML()}
-    <div class="row" style="justify-content:center;margin-bottom:8px">
-      <button class="btn" data-act="dealer" id="p-dealer">Move dealer button</button>
-      <button class="btn" data-act="seats" id="p-seats">Shuffle seats</button>
-    </div>
-    <div class="list">${rows}</div>
-    ${cash ? `<p class="small ${counted && counted !== chipTotal ? "neg" : "muted"}">Chips counted ${fmtN(counted)} of ${fmtN(chipTotal)} issued${counted && counted !== chipTotal ? " — recount before settling" : ""}. 1 chip = ${money(pk.buyIn / pk.chips)}.</p>`
-      : `<p class="small muted">Payouts: ${sp.map((p, i) => `${ordinal(i + 1)} ${money(pool * p / 100)}`).join(" · ")}</p>`}
-    ${results}
-  </section>
-  <section class="panel"><h2>Game settings</h2>
-    <div class="fields">
-      <label class="f">Format<select id="pk-mode" data-input="pk" data-k="mode"><option value="tournament" ${pk.mode === "tournament" ? "selected" : ""}>Tournament</option><option value="cash" ${cash ? "selected" : ""}>Cash game</option></select></label>
-      <label class="f">Currency<input type="text" id="pk-cur" data-input="pk" data-k="currency" value="${esc(pk.currency)}" maxlength="3"></label>
-      <label class="f">Buy-in<input type="number" inputmode="decimal" min="0" id="pk-buy" data-input="pk" data-k="buyIn" value="${pk.buyIn}"></label>
-      <label class="f">Starting chips<input type="number" inputmode="numeric" min="100" step="100" id="pk-chips" data-input="pk" data-k="chips" value="${pk.chips}"></label>
-      <label class="f">Level length<select id="pk-min" data-input="pkmin">${[10, 12, 15, 20, 25, 30].map(v => `<option value="${v}" ${pk.timer.minutes === v ? "selected" : ""}>${v} min</option>`).join("")}</select></label>
-      ${!cash ? `<label class="f">Payouts<select id="pk-pay" data-input="pk" data-k="payout">${["100", "65/35", "50/30/20"].map(v => `<option value="${v}" ${pk.payout === v ? "selected" : ""}>${v === "100" ? "Winner takes all" : v.split("/").map(x => x + "%").join(" / ")}</option>`).join("")}</select></label>` : ""}
-    </div>
-    <div class="row" style="margin-top:16px">${confirmBtn("reset-timer", "Reset clock", "")}${confirmBtn("reset-poker", "Reset poker game", "danger")}</div>
+function viewLogin() {
+  const list = P();
+  return `<section class="panel login">
+    <div class="big">Who are you?</div>
+    <p class="muted" style="margin:0">Tap your name. No password. Everything you record is marked with it.</p>
+    ${list.length ? `<div class="names">${list.map(p => `<button data-act="login" data-id="${p.id}" id="lg-${p.id}">${esc(p.name || "Unnamed")}</button>`).join("")}</div>` : ""}
+    <h3 style="margin:0">${list.length ? "Not on the list?" : "Be the first one in"}</h3>
+    <form class="row" id="join" style="flex-wrap:nowrap"><input type="text" id="join-name" placeholder="Your name" maxlength="30" aria-label="Your name"><button class="btn primary" type="submit" id="join-go">Join</button></form>
+    <button class="btn sm" data-act="login" data-id="guest" id="lg-guest" style="justify-self:start">Just watching</button>
   </section>`;
 }
-const ordinal = n => n + (n % 10 === 1 && n % 100 !== 11 ? "st" : n % 10 === 2 && n % 100 !== 12 ? "nd" : n % 10 === 3 && n % 100 !== 13 ? "rd" : "th");
 
-function stepper(m, side) { const v = side === "a" ? m.ga : m.gb;
-  return `<span class="step"><button data-act="goal" data-id="${m.id}" data-side="${side}" data-d="-1" aria-label="Remove goal">−</button><span>${v}</span><button data-act="goal" data-id="${m.id}" data-side="${side}" data-d="1" aria-label="Add goal">+</button></span>`; }
-function matchEditor(m) {
-  const ko = m.stage !== "league", tie = m.ga === m.gb;
-  return `<div class="pitchcard"><div class="stage">${m.done ? "Full time" : "On the pitch"} · ${stageName(m)}</div>
-    <div class="vs"><div class="pl">${esc(nm(m.a))}<small>${esc(team(m.a))}</small>${m.done ? "" : stepper(m, "a")}</div>
+function viewLive() {
+  const fifa = P().filter(p => p.fifa), all = P(), f = ui.form, lm = liveMatches(), dm = doneMatches().slice().reverse();
+  const pool = fifa.length >= 2 ? fifa : all;
+  const ga = groupOf(f.a), gb = groupOf(f.b), warnGroup = f.stage === "group" && f.a && f.b && !(ga && ga === gb);
+  const start = `<section class="panel"><h2>Start a match</h2>
+    <div class="startgrid">
+      <div class="side"><label class="f">Player<select id="f-a" data-input="form" data-k="a">${opts(pool.filter(p => p.id !== f.b), f.a, "Pick player")}</select></label>
+        <label class="f">Team<input type="text" id="f-ta" data-input="form" data-k="teamA" value="${esc(f.teamA)}" placeholder="e.g. Real Madrid" maxlength="30"></label></div>
+      <div class="v">VS</div>
+      <div class="side"><label class="f">Player<select id="f-b" data-input="form" data-k="b">${opts(pool.filter(p => p.id !== f.a), f.b, "Pick player")}</select></label>
+        <label class="f">Team<input type="text" id="f-tb" data-input="form" data-k="teamB" value="${esc(f.teamB)}" placeholder="e.g. Arsenal" maxlength="30"></label></div>
+    </div>
+    <div class="fields" style="margin-top:12px">
+      <label class="f">Counts as<select id="f-stage" data-input="form" data-k="stage"><option value="group" ${f.stage === "group" ? "selected" : ""}>Group stage</option><option value="knockout" ${f.stage === "knockout" ? "selected" : ""}>Knockout</option><option value="friendly" ${f.stage === "friendly" ? "selected" : ""}>Friendly (not counted)</option></select></label>
+      ${f.stage === "knockout" ? `<label class="f">Round<select id="f-round" data-input="form" data-k="round">${["Quarter-final", "Semi-final", "3rd place", "Final"].map(r => `<option ${f.round === r ? "selected" : ""}>${r}</option>`).join("")}</select></label>` : ""}
+    </div>
+    ${warnGroup ? `<p class="notice warn small" style="margin:12px 0 0">These two aren't in the same group, so this match won't show in a group table. It still counts in the overall table.</p>` : ""}
+    ${(f.a && busy(f.a)) || (f.b && busy(f.b)) ? `<p class="small neg" style="margin:8px 0 0">One of them is already in a live match.</p>` : ""}
+    <div class="row" style="margin-top:12px"><button class="btn pitch big" data-act="kickoff" id="kickoff" ${f.a && f.b ? "" : "disabled"}>Kick off</button></div>
+  </section>`;
+  const liveCards = lm.length ? `<section class="panel"><h2>Live now <span class="tag live">${lm.length}</span></h2><div style="display:grid;gap:12px">${lm.map(m => matchCard(m)).join("")}</div></section>` : "";
+  const results = `<section class="panel"><h2>Results <span class="tag fifa">${dm.length} played</span></h2>
+    ${dm.length ? `<div class="list">${dm.map(m => ui.edit === m.id ? `<div style="padding:8px 0">${matchCard(m)}</div>` : mrow(m)).join("")}</div><p class="small muted">* won on penalties</p>` : `<p class="muted">Finished matches show up here. Tap Edit to fix a score.</p>`}
+  </section>`;
+  return liveCards + start + results;
+}
+function matchCard(m) {
+  const editing = m.status === "done", ko = m.stage === "knockout", tie = m.ga === m.gb;
+  const st = (side) => `<span class="step"><button data-act="goal" data-id="${m.id}" data-side="${side}" data-d="-1" aria-label="Remove goal for ${esc(nm(m[side]))}">−</button><span>${side === "a" ? m.ga : m.gb}</span><button data-act="goal" data-id="${m.id}" data-side="${side}" data-d="1" aria-label="Goal for ${esc(nm(m[side]))}">+</button></span>`;
+  return `<div class="match ${editing ? "" : "live"}">
+    <div class="stage">${editing ? "Editing result" : `<span class="livedot"></span>Live`} · ${esc(stageLabel(m))}</div>
+    <div class="vs"><div class="pl">${esc(nm(m.a))}<small>${esc(m.teamA || "")}</small>${st("a")}</div>
       <div class="score">${m.ga}–${m.gb}</div>
-      <div class="pl">${esc(nm(m.b))}<small>${esc(team(m.b))}</small>${m.done ? "" : stepper(m, "b")}</div></div>
-    ${ko && tie && !m.done ? `<div class="row" style="justify-content:center"><span class="small muted">Penalties won by</span>
+      <div class="pl">${esc(nm(m.b))}<small>${esc(m.teamB || "")}</small>${st("b")}</div></div>
+    ${ko && tie ? `<div class="row" style="justify-content:center"><span class="small muted">Won on penalties by</span>
       <button class="toggle ${m.pens === m.a ? "on f" : ""}" data-act="pens" data-id="${m.id}" data-w="${m.a}" id="pa-${m.id}">${esc(nm(m.a))}</button>
       <button class="toggle ${m.pens === m.b ? "on f" : ""}" data-act="pens" data-id="${m.id}" data-w="${m.b}" id="pb-${m.id}">${esc(nm(m.b))}</button></div>` : ""}
-    ${ko && tie && m.done && m.pens ? `<div class="small muted" style="text-align:center">${esc(nm(m.pens))} won on penalties</div>` : ""}
-    <div class="row" style="justify-content:center">${m.done ? `<button class="btn sm" data-act="reopen" data-id="${m.id}" id="ro-${m.id}">Edit score</button>`
-      : `<button class="btn pitch" data-act="ft" data-id="${m.id}" id="ft-${m.id}" ${ko && tie && !m.pens ? "disabled" : ""}>Full time</button>`}</div>
-  </div>`; }
-function mrow(m, cur) { const w = m.done ? winner(m) : null;
-  const c = id => w ? (id === w ? "w" : "l") : "";
-  return `<div class="mrow ${cur ? "now" : ""}"><span class="a ${c(m.a)}">${esc(nm(m.a))}</span><span class="s">${m.done ? m.ga + "–" + m.gb + (m.ga === m.gb && m.pens ? "*" : "") : cur ? "LIVE" : "v"}</span><span class="b ${c(m.b)}">${esc(nm(m.b))}</span>
-    <button class="btn sm" data-act="open" data-id="${m.id}" id="om-${m.id}">${ui.openMatch === m.id ? "Close" : m.done ? "Edit" : "Score"}</button></div>
-    ${ui.openMatch === m.id && !cur ? matchEditor(m) : ""}`; }
-
-function viewFifa() {
-  if (!P().length) return emptyPlayers();
-  const f = S.fifa, ids = fifaIds(), cur = current(), ch = champion();
-  const L = M().filter(m => m.stage === "league"), KO = M().filter(m => m.stage !== "league");
-  const changed = M().length && !sameSet(ids, f.roster);
-  const n = ids.length, games = (n * (n - 1) / 2) * f.legs + (f.playoff === "semis" ? 3 : f.playoff === "final" ? 1 : 0);
-  const setup = `<section class="panel"><h2>Tournament setup <span class="tag fifa">${n} players</span></h2>
-    <div class="fields">
-      <label class="f">League<select id="ff-legs" data-input="ff" data-k="legs"><option value="1" ${f.legs === 1 ? "selected" : ""}>Play everyone once</option><option value="2" ${f.legs === 2 ? "selected" : ""}>Home and away</option></select></label>
-      <label class="f">Playoffs<select id="ff-po" data-input="ff" data-k="playoff"><option value="semis" ${f.playoff === "semis" ? "selected" : ""}>Top 4: semis + final</option><option value="final" ${f.playoff === "final" ? "selected" : ""}>Top 2: final</option><option value="none" ${f.playoff === "none" ? "selected" : ""}>None, league winner</option></select></label>
-      <label class="f">Match length<select id="ff-min" data-input="ff" data-k="minutes">${[6, 8, 10, 12, 15].map(v => `<option value="${v}" ${f.minutes === v ? "selected" : ""}>${v} min incl. setup</option>`).join("")}</select></label>
+    <div class="row" style="justify-content:center">
+      ${editing ? `<button class="btn primary" data-act="doneedit" id="de-${m.id}">Save</button>${confirmBtn("delm-" + m.id, "Delete result", "danger sm")}`
+        : `<button class="btn pitch big" data-act="ft" data-id="${m.id}" id="ft-${m.id}" ${ko && tie && !m.pens ? "disabled" : ""}>Full time</button>${confirmBtn("delm-" + m.id, "Cancel match", "danger sm")}`}
     </div>
-    <p class="small muted">${n >= 2 ? `${games} matches · about ${Math.floor(games * f.minutes / 60)}h ${games * f.minutes % 60}m on one console` : "Mark at least 2 players for FIFA in the Players tab."}${f.playoff === "semis" && n < 4 ? " Semis need 4+ players." : ""}</p>
-    <div class="row">${M().length ? confirmBtn("gen", "Redraw schedule (clears scores)", "danger") : `<button class="btn pitch" data-act="gen" id="ff-gen" ${n < 2 ? "disabled" : ""}>Draw schedule</button>`}</div>
+    <div class="small muted" style="text-align:center">Started ${clock(m.at)} by ${esc(m.by === "guest" ? "a guest" : nm(m.by))}</div>
+  </div>`;
+}
+function mrow(m) {
+  const w = winner(m), c = id => w ? (id === w ? "w" : "l") : "";
+  return `<div class="mrow"><span class="a ${c(m.a)}">${esc(nm(m.a))}<small>${esc(m.teamA || "")}</small></span>
+    <span class="s">${m.ga}–${m.gb}${tie(m) && m.pens ? "*" : ""}</span>
+    <span class="b ${c(m.b)}">${esc(nm(m.b))}<small>${esc(m.teamB || "")}</small></span>
+    <button class="btn sm" data-act="edit" data-id="${m.id}" id="ed-${m.id}">Edit</button>
+    <span class="meta">${esc(stageLabel(m))} · ${clock(m.endedAt || m.at)} · by ${esc(m.doneBy === "guest" || !m.doneBy ? "a guest" : nm(m.doneBy))}</span></div>`;
+}
+const tie = m => m.ga === m.gb;
+
+function viewPoker() {
+  const s = settings(), ids = pokerIds(), log = buyins().slice().reverse();
+  const total = buyins().reduce((t, b) => t + (Number(b.amount) || 0), 0);
+  const others = P().filter(p => !ids.includes(p.id));
+  const outs = ids.filter(id => cashOut(id) != null), outTotal = outs.reduce((t, id) => t + cashOut(id), 0);
+  const allOut = ids.length && ids.filter(id => paidIn(id) > 0).every(id => cashOut(id) != null);
+  const nets = ids.map(id => ({ id, net: (cashOut(id) || 0) - paidIn(id) }));
+  const rowsH = ids.map(id => { const n = countIn(id), cust = ui.custom[id];
+    return `<div class="li">
+      <span class="name">${esc(nm(id))}<small>${n} buy-in${n === 1 ? "" : "s"} · ${money(paidIn(id))}</small></span>
+      <span class="chips" aria-hidden="true">${"<i class=\"chip\"></i>".repeat(Math.min(n, 10))}</span>
+      <span class="row">
+        ${n ? confirmBtn("undo-" + id, "Undo", "sm") : ""}
+        ${cust ? `<input type="number" inputmode="decimal" min="0" id="cu-${id}" data-input="custom" data-id="${id}" value="${esc(cust.v)}" style="width:90px" aria-label="Custom amount"><button class="btn sm felt" data-act="addcustom" data-id="${id}" id="ac-${id}">Add</button>`
+          : `<button class="btn sm" data-act="custom" data-id="${id}" id="cb-${id}" aria-label="Other amount">Other</button>`}
+        <button class="btn felt" data-act="buyin" data-id="${id}" id="bi-${id}">+ ${money(s.buyIn)}</button>
+      </span></div>`; }).join("");
+  return `<section class="panel"><h2>Buy-ins <span class="tag poker">${ids.length} players</span></h2>
+    <div class="pot"><div><b>${money(total)}</b><span>In the pot</span></div><div><b>${buyins().length}</b><span>Buy-ins</span></div><div><b>${ids.length ? money(total / ids.length) : money(0)}</b><span>Avg / player</span></div></div>
+    ${ids.length ? `<div class="list" style="margin-top:8px">${rowsH}</div>` : `<p class="muted">Mark poker players in Players &amp; groups, or add someone below.</p>`}
+    ${others.length ? `<div class="row" style="margin-top:10px"><select id="addp" aria-label="Add a player to the table" style="width:auto;flex:1 1 160px">${opts(others, "", "Add someone to the table…")}</select><button class="btn" data-act="seat" id="seat-go">Add</button></div>` : ""}
+    <div class="row small muted" style="margin-top:12px">Standard buy-in <input type="number" inputmode="decimal" min="1" id="s-buy" data-input="setting" data-k="buyIn" value="${s.buyIn}" style="width:90px"> currency <input type="text" id="s-cur" data-input="setting" data-k="currency" value="${esc(s.currency)}" maxlength="3" style="width:64px"></div>
+  </section>
+  <section class="panel"><h2>Buy-in log</h2>
+    ${log.length ? `<div class="list">${log.slice(0, 40).map(b => `<div class="li"><span class="name">${esc(nm(b.player))}<small>${clock(b.at)} · recorded by ${esc(b.by === "guest" || !b.by ? "a guest" : nm(b.by))}</small></span><b class="money">${money(b.amount)}</b>${confirmBtn("delb-" + b.id, "Remove", "sm danger")}</div>`).join("")}</div>` : `<p class="muted">Every buy-in is logged here with the time and who recorded it.</p>`}
+  </section>
+  <section class="panel"><h2>End of night</h2>
+    <p class="small muted" style="margin-top:0">Enter what each player walks away with. Settle-up appears once everyone who bought in has a number.</p>
+    <div class="list">${ids.map(id => `<div class="li"><span class="name">${esc(nm(id))}<small>Paid in ${money(paidIn(id))}</small></span>
+      <input type="number" inputmode="decimal" min="0" placeholder="Cash out" id="co-${id}" data-input="cashout" data-id="${id}" value="${cashOut(id) == null ? "" : esc(cashOut(id))}" style="width:120px">
+      ${cashOut(id) != null ? `<b class="money ${cashOut(id) - paidIn(id) > 0.005 ? "pos" : cashOut(id) - paidIn(id) < -0.005 ? "neg" : ""}" style="min-width:64px;text-align:right">${cashOut(id) - paidIn(id) > 0.005 ? "+" : ""}${money(cashOut(id) - paidIn(id))}</b>` : `<span style="min-width:64px"></span>`}</div>`).join("")}</div>
+    ${outs.length ? `<p class="small ${Math.abs(outTotal - total) > 0.005 && allOut ? "neg" : "muted"}">Cashed out ${money(outTotal)} of ${money(total)} in the pot${allOut && Math.abs(outTotal - total) > 0.005 ? `. That's ${money(Math.abs(outTotal - total))} ${outTotal > total ? "too much" : "missing"}, so recount before settling.` : "."}</p>` : ""}
+    ${allOut ? (() => { const st = settle(nets); return `<h3>Settle up</h3>${st.length ? `<div class="list">${st.map(t => `<div class="li"><span class="name">${esc(nm(t.from))} <span class="muted">pays</span> ${esc(nm(t.to))}</span><b class="money">${money(t.v)}</b></div>`).join("")}</div>` : `<p class="muted">Everyone's square.</p>`}`; })() : ""}
   </section>`;
-  if (!M().length) return setup;
-  const st = standings(), q = f.playoff === "semis" ? 4 : f.playoff === "final" ? 2 : 1;
-  return `
-  ${changed ? `<div class="notice warn">The FIFA player list changed since the draw. Redraw the schedule below to include everyone.</div>` : ""}
-  <section class="panel"><h2>${ch ? "Champion" : "On the pitch"}</h2>
-    ${ch ? `<div class="champ">🏆︎ ${esc(nm(ch))}</div>` : ""}
-    ${cur ? matchEditor(cur) : ""}
-    ${cur ? (() => { const nx = M().filter(m => !m.done).slice(1, 3); return nx.length ? `<h3>Get ready</h3><div class="list">${nx.map(m => `<div class="li"><span class="name">${esc(nm(m.a))} <span class="muted">v</span> ${esc(nm(m.b))}</span><span class="muted small">${stageName(m)}</span></div>`).join("")}</div>` : ""; })() : ""}
-    ${!cur && !ch ? `<p class="muted">All matches played.</p>` : ""}
-  </section>
-  <section class="panel"><h2>League table</h2>
-    <div class="tbl"><table><thead><tr><th>#</th><th>Player</th><th>P</th><th>W</th><th>D</th><th>L</th><th>GD</th><th>Pts</th></tr></thead><tbody>
-    ${st.map((r, i) => `<tr class="${i < q && f.playoff !== "none" ? "q" : ""}"><td>${i + 1}</td><td>${esc(nm(r.id))}${team(r.id) ? `<div class="small muted" style="font-weight:400">${esc(team(r.id))}</div>` : ""}</td><td>${r.p}</td><td>${r.w}</td><td>${r.d}</td><td>${r.l}</td><td>${r.gf - r.ga > 0 ? "+" : ""}${r.gf - r.ga}</td><td><b>${r.pts}</b></td></tr>`).join("")}
-    </tbody></table></div>
-    ${f.playoff !== "none" ? `<p class="small muted">Top ${q} go to the ${f.playoff === "semis" ? "semi-finals" : "final"}. Ties split by goal difference, then goals scored.</p>` : ""}
-  </section>
-  ${KO.length ? `<section class="panel"><h2>Playoffs</h2><div class="list">${KO.map(m => mrow(m, m === cur)).join("")}</div><p class="small muted">* won on penalties</p></section>` : ""}
-  <section class="panel"><h2>League fixtures <span class="tag fifa">${L.filter(m => m.done).length}/${L.length} played</span></h2>
-    <div class="list">${L.map(m => mrow(m, m === cur)).join("")}</div></section>
-  ${setup}`;
 }
 
-function viewPlayers() {
-  const list = P(), np = list.filter(p => p.poker).length, nf = list.filter(p => p.fifa).length;
-  return `<section class="panel"><h2>Players <span class="tag">${list.length}</span> <span class="tag poker">${np} poker</span> <span class="tag fifa">${nf} FIFA</span></h2>
+function fifaTable(t, cls) {
+  return `<div class="tbl"><table><thead><tr><th>#</th><th>Player</th><th>P</th><th>W</th><th>D</th><th>L</th><th class="wide">GF</th><th class="wide">GA</th><th>GD</th><th>Pts</th></tr></thead><tbody>
+    ${t.map((r, i) => `<tr class="${i === 0 && r.p ? "top1" : ""}"><td>${i + 1}</td><td>${esc(nm(r.id))}</td><td>${r.p}</td><td>${r.w}</td><td>${r.d}</td><td>${r.l}</td><td class="wide">${r.gf}</td><td class="wide">${r.ga}</td><td>${r.gf - r.ga > 0 ? "+" : ""}${r.gf - r.ga}</td><td><b>${r.pts}</b></td></tr>`).join("")}
+  </tbody></table></div>`;
+}
+function viewBoard() {
+  const seg = `<div class="seg" role="group" aria-label="Leaderboard"><button data-act="board" data-v="fifa" id="bd-f" aria-pressed="${ui.board === "fifa"}">FIFA</button><button data-act="board" data-v="poker" id="bd-p" aria-pressed="${ui.board === "poker"}">Poker</button></div>`;
+  if (ui.board === "poker") {
+    const ids = pokerIds(), anyOut = ids.some(id => cashOut(id) != null);
+    const r = ids.map(id => ({ id, n: countIn(id), inn: paidIn(id), out: cashOut(id) })).sort((a, b) => anyOut ? ((b.out ?? 0) - b.inn) - ((a.out ?? 0) - a.inn) : b.inn - a.inn);
+    return `<div>${seg}</div><section class="panel"><h2>Poker leaderboard</h2>
+      ${r.length ? `<div class="tbl"><table><thead><tr><th>#</th><th>Player</th><th>Buy-ins</th><th>Paid in</th><th>Cash out</th><th>Net</th></tr></thead><tbody>
+      ${r.map((x, i) => { const net = x.out == null ? null : x.out - x.inn; return `<tr class="${i === 0 && anyOut ? "top1" : ""}"><td>${i + 1}</td><td>${esc(nm(x.id))}</td><td>${x.n}</td><td>${money(x.inn)}</td><td>${x.out == null ? "–" : money(x.out)}</td><td class="${net == null ? "" : net > 0.005 ? "pos" : net < -0.005 ? "neg" : ""}"><b>${net == null ? "–" : (net > 0.005 ? "+" : "") + money(net)}</b></td></tr>`; }).join("")}
+      </tbody></table></div><p class="small muted">${anyOut ? "Ranked by net result." : "Ranked by money paid in until cash-outs are entered."}</p>` : `<p class="muted">No buy-ins yet.</p>`}
+    </section>`;
+  }
+  const dm = doneMatches(), counted = dm.filter(m => m.stage !== "friendly");
+  const groups = G().map(g => { const ids = P().filter(p => p.group === g.id).map(p => p.id);
+    const ms = dm.filter(m => m.stage === "group" && groupOf(m.a) === g.id && groupOf(m.b) === g.id);
+    return `<section class="panel"><h2>${esc(g.name || "Group")} <span class="tag fifa">${ms.length} played</span></h2>${ids.length ? fifaTable(table(ms, ids)) : `<p class="muted">No players in this group yet.</p>`}</section>`; }).join("");
+  const ko = dm.filter(m => m.stage === "knockout");
+  const finals = ko.filter(m => m.round === "Final"), champ = finals.length ? winner(finals[finals.length - 1]) : null;
+  const fifaIds = P().filter(p => p.fifa).map(p => p.id);
+  return `<div>${seg}</div>
+    ${champ ? `<section class="panel" style="text-align:center"><div class="small muted" style="letter-spacing:.1em;text-transform:uppercase;font-weight:700">Champion</div><div style="font-family:var(--display);font-weight:800;font-size:40px;color:var(--gold);text-transform:uppercase;line-height:1.1">${esc(nm(champ))}</div></section>` : ""}
+    ${groups || `<div class="notice">No groups yet. Add them in Players &amp; groups to get group tables.</div>`}
+    ${ko.length ? `<section class="panel"><h2>Knockouts</h2><div class="list">${ko.map(m => { const w = winner(m), c = id => w ? (id === w ? "w" : "l") : ""; return `<div class="mrow" style="grid-template-columns:1fr auto 1fr"><span class="a ${c(m.a)}">${esc(nm(m.a))}</span><span class="s">${m.ga}–${m.gb}${tie(m) && m.pens ? "*" : ""}</span><span class="b ${c(m.b)}">${esc(nm(m.b))}</span><span class="meta">${esc(m.round || "Knockout")}</span></div>`; }).join("")}</div></section>` : ""}
+    <section class="panel"><h2>Overall <span class="tag fifa">${counted.length} matches</span></h2>
+      ${counted.length || fifaIds.length ? fifaTable(table(counted, fifaIds)) : `<p class="muted">No results yet.</p>`}
+      <p class="small muted">Every group and knockout match. Friendlies don't count. 3 points for a win, 1 for a draw; ties split by goal difference, then goals scored.</p></section>`;
+}
+
+function viewSetup() {
+  const list = P(), gs = G(), np = list.filter(p => p.poker).length, nf = list.filter(p => p.fifa).length;
+  return `<section class="panel"><h2>Groups <span class="tag fifa">${gs.length}</span></h2>
+    ${gs.length ? gs.map(g => `<div class="grow"><input type="text" id="gn-${g.id}" data-input="gname" data-id="${g.id}" value="${esc(g.name)}" maxlength="24" aria-label="Group name"><button class="x" data-act="rmgroup" data-id="${g.id}" id="rg-${g.id}" aria-label="Delete ${esc(g.name)}">×</button></div>`).join("") : `<p class="muted">Add your groups, then pick each player's group below.</p>`}
+    <button class="btn" data-act="addgroup" id="g-add" style="margin-top:8px">Add group</button>
+  </section>
+  <section class="panel"><h2>Players <span class="tag">${list.length}</span> <span class="tag poker">${np} poker</span> <span class="tag fifa">${nf} FIFA</span></h2>
     ${list.length ? `<div class="list">${list.map(p => `<div class="prow">
-      <input type="text" id="pn-${p.id}" data-input="pname" data-id="${p.id}" value="${esc(p.name)}" placeholder="Name" aria-label="Name">
-      <input type="text" class="team" id="pt-${p.id}" data-input="pteam" data-id="${p.id}" value="${esc(p.team || "")}" placeholder="FIFA team (optional)" aria-label="FIFA team">
+      <input type="text" class="pn" id="pn-${p.id}" data-input="pname" data-id="${p.id}" value="${esc(p.name)}" placeholder="Name" maxlength="30" aria-label="Name">
+      <input type="text" id="pt-${p.id}" data-input="pteam" data-id="${p.id}" value="${esc(p.team || "")}" placeholder="Usual team" maxlength="30" aria-label="Usual FIFA team">
+      <select id="pg-${p.id}" data-input="pgroup" data-id="${p.id}" aria-label="Group"><option value="">No group</option>${gs.map(g => `<option value="${g.id}" ${p.group === g.id ? "selected" : ""}>${esc(g.name || "Group")}</option>`).join("")}</select>
       <button class="toggle p ${p.poker ? "on" : ""}" data-act="tog" data-k="poker" data-id="${p.id}" id="tp-${p.id}" aria-pressed="${!!p.poker}">Poker</button>
       <button class="toggle f ${p.fifa ? "on" : ""}" data-act="tog" data-k="fifa" data-id="${p.id}" id="tf-${p.id}" aria-pressed="${!!p.fifa}">FIFA</button>
-      <button class="x" data-act="rm" data-id="${p.id}" id="rm-${p.id}" aria-label="Remove ${esc(p.name)}">×</button>
-    </div>`).join("")}</div>` : `<p class="muted">No players yet. Add them one by one, or start with placeholders and rename.</p>`}
-    <div class="row" style="margin-top:12px">
-      <button class="btn primary" data-act="add" id="pl-add">Add player</button>
-      ${list.length < 12 ? `<button class="btn" data-act="quickfill" id="pl-fill">Fill up to 12</button>` : ""}
-      ${list.length >= 2 ? `<button class="btn" data-act="split" id="pl-split">Random split: 6 poker / rest FIFA</button>` : ""}
-    </div>
-    ${np > 9 ? `<p class="small neg">That's ${np} at one poker table. Six is comfortable; nine is the max.</p>` : ""}
-    <p class="small muted">A player can be in both. Poker busts can still play FIFA matches between hands.</p>
-  </section>`;
+      <button class="x" data-act="rmp" data-id="${p.id}" id="rm-${p.id}" aria-label="Remove ${esc(p.name)}">×</button>
+    </div>`).join("")}</div>` : `<p class="muted">No players yet.</p>`}
+    <div class="row" style="margin-top:12px"><button class="btn primary" data-act="addp" id="pl-add">Add player</button></div>
+    <p class="small muted">Usual team fills in automatically when a match starts and can be changed per match. Players can be in both poker and FIFA.</p>
+  </section>
+  <section class="panel"><h2>Start over</h2><div class="row">${confirmBtn("clr-m", "Clear all FIFA results", "danger")}${confirmBtn("clr-b", "Clear all buy-ins and cash-outs", "danger")}</div></section>`;
 }
 
 /* ---------- render ---------- */
 const app = document.getElementById("app");
 function render() {
   const sync = document.getElementById("sync");
-  sync.textContent = !ready ? "Connecting…" : live ? "Live · shared" : "This device only";
+  sync.textContent = !ready ? "Connecting…" : live ? "Live" : "This device only";
   sync.className = "sync" + (live ? " live" : "");
-  document.querySelectorAll("#tabs button").forEach(b => b.setAttribute("aria-selected", b.dataset.tab === ui.tab));
-  const ae = document.activeElement, aid = ae && ae.id, sel = ae && "selectionStart" in ae ? [ae.selectionStart, ae.selectionEnd] : null;
-  app.innerHTML = ui.tab === "poker" ? viewPoker() : ui.tab === "fifa" ? viewFifa() : ui.tab === "players" ? viewPlayers() : viewTonight();
-  if (aid) { const el = document.getElementById(aid); if (el && el !== document.activeElement) { el.focus({ preventScroll: true }); try { if (sel && el.type === "text") el.setSelectionRange(sel[0], sel[1]); } catch (e) {} } }
-  lastLevel = Math.floor(tElapsed() / levelMs());
+  const meBtn = document.getElementById("me-btn"), meOk = me === "guest" || (me && player(me));
+  meBtn.hidden = !ready || !meOk; meBtn.textContent = me === "guest" ? "Guest · switch" : meOk ? nm(me) + " · switch" : "";
+  document.getElementById("tabs").hidden = !meOk;
+  document.querySelectorAll("#tabs button").forEach(b => { b.setAttribute("aria-selected", b.dataset.tab === ui.tab);
+    if (b.dataset.tab === "live") b.innerHTML = "Live FIFA" + (liveMatches().length ? '<span class="dot" aria-label="matches live"></span>' : ""); });
+  const ae = document.activeElement, aid = ae && ae.id, sel = ae && ae.type === "text" ? [ae.selectionStart, ae.selectionEnd] : null;
+  app.innerHTML = !ready ? `<section class="panel"><p class="muted">Loading tonight's games…</p></section>` : !meOk ? viewLogin()
+    : ui.tab === "poker" ? viewPoker() : ui.tab === "board" ? viewBoard() : ui.tab === "setup" ? viewSetup() : viewLive();
+  if (aid) { const el = document.getElementById(aid); if (el && el !== document.activeElement) { el.focus({ preventScroll: true }); try { if (sel) el.setSelectionRange(sel[0], sel[1]); } catch (e) {} } }
 }
-
-/* clock tick: update only the digits; full render on level change */
-let lastLevel = 0, actx = null;
-function beep() { if (!actx) return; try { [0, .25, .5].forEach(t => { const o = actx.createOscillator(), g = actx.createGain();
-  o.frequency.value = 880; g.gain.value = .15; o.connect(g); g.connect(actx.destination); o.start(actx.currentTime + t); o.stop(actx.currentTime + t + .15); }); } catch (e) {} }
-setInterval(() => {
-  const el = tElapsed(), lm = levelMs(), lvl = Math.floor(el / lm);
-  if (lvl !== lastLevel) { if (S.poker.timer.running && lvl > lastLevel) { beep(); try { navigator.vibrate && navigator.vibrate([200, 100, 200]); } catch (e) {} } render(); return; }
-  document.querySelectorAll("[data-time]").forEach(t => { t.textContent = fmtT(lm - (el % lm)); });
-  document.querySelectorAll("[data-clock]").forEach(c => c.classList.toggle("ending", S.poker.timer.running && lm - (el % lm) < 60000));
-}, 500);
-
 function toast(msg) { const t = document.createElement("div"); t.className = "toast"; t.textContent = msg; document.body.appendChild(t); setTimeout(() => t.remove(), 3200); }
 
 /* ---------- actions ---------- */
-function setTab(t) { ui.tab = t; ui.openMatch = null; try { localStorage.setItem("gn-tab", t); } catch (e) {} render(); window.scrollTo(0, 0); }
-function newPlayer(name) { return { id: uid(), name, team: "", poker: false, fifa: false }; }
-function setTimer(fn) { const t = S.poker.timer; const el = tElapsed(); fn(t, el); commit("poker"); }
+const by = () => me || "guest";
+const timers = {};
+const later = (key, fn) => { clearTimeout(timers[key]); timers[key] = setTimeout(fn, 500); };
+function setTab(t) { ui.tab = t; ui.edit = null; try { localStorage.setItem("gn-tab2", t); } catch (e) {} render(); window.scrollTo(0, 0); }
+const newPlayer = name => ({ name, team: "", group: "", poker: false, fifa: false, at: Date.now() });
+const upd = (col, id, patch) => { const cur = D[col][id]; if (cur) save(col, id, Object.assign({}, cur, patch)); };
 
 const ACT = {
-  go: d => setTab(d.tab),
-  quickfill: () => { const l = S.players.list; let i = l.length; while (l.length < 12) l.push(newPlayer("Player " + (++i)));
-    if (!l.some(p => p.poker || p.fifa)) l.forEach((p, j) => { p.poker = j < 6; p.fifa = j >= 6; });
-    commit("players"); if (ui.tab === "tonight") setTab("players"); },
-  add: () => { S.players.list.push(newPlayer("")); commit("players"); setTimeout(() => { const l = P(); const el = document.getElementById("pn-" + l[l.length - 1].id); el && el.focus(); }, 0); },
-  rm: d => { S.players.list = P().filter(p => p.id !== d.id); commit("players"); },
-  tog: d => { const p = byId(d.id); if (p) { p[d.k] = !p[d.k]; commit("players"); } },
-  split: () => { const ids = shuffle(P().map(p => p.id)); P().forEach(p => { const i = ids.indexOf(p.id); p.poker = i < 6; p.fifa = i >= 6; });
-    commit("players"); toast("Split done. Check the Poker and FIFA tabs."); },
-  timer: () => { if (!actx) { try { actx = new (window.AudioContext || window.webkitAudioContext)(); } catch (e) {} }
-    setTimer((t, el) => { if (t.running) { t.elapsed = el; t.running = false; } else { t.startedAt = Date.now(); t.running = true; } }); wake(); },
-  "lvl-next": () => setTimer((t, el) => { t.elapsed = (Math.floor(el / levelMs()) + 1) * levelMs(); t.startedAt = Date.now(); }),
-  "lvl-prev": () => setTimer((t, el) => { t.elapsed = Math.max(0, Math.floor(el / levelMs()) - 1) * levelMs(); t.startedAt = Date.now(); }),
-  buyin: d => { const e = entry(d.id); e.buyIns = Math.max(1, e.buyIns + Number(d.d)); S.poker.entries[d.id] = e;
-    if (Number(d.d) > 0) S.poker.bust = S.poker.bust.filter(i => i !== d.id); commit("poker"); },
-  bust: d => { if (!S.poker.bust.includes(d.id)) S.poker.bust.push(d.id); commit("poker"); },
-  unbust: d => { S.poker.bust = S.poker.bust.filter(i => i !== d.id); commit("poker"); },
-  dealer: () => { const s = seatOrder(), b = busted(); if (!s.length) return; let i = S.poker.dealer % s.length;
-    for (let k = 0; k < s.length; k++) { i = (i + 1) % s.length; if (!b.includes(s[i]) || S.poker.mode === "cash") break; }
-    S.poker.dealer = i; commit("poker"); },
-  seats: () => { S.poker.seats = shuffle(seatOrder()); S.poker.dealer = 0; commit("poker"); },
-  gen: () => { const ids = fifaIds(); if (ids.length < 2) return; S.fifa.roster = ids; S.fifa.matches = roundRobin(ids, S.fifa.legs); ui.openMatch = null; commit("fifa"); },
-  goal: d => { const m = M().find(x => x.id === d.id); if (!m || m.done) return; const k = d.side === "a" ? "ga" : "gb";
-    m[k] = Math.max(0, m[k] + Number(d.d)); if (m.ga !== m.gb) m.pens = null; commit("fifa"); },
-  pens: d => { const m = M().find(x => x.id === d.id); if (m) { m.pens = d.w; commit("fifa"); } },
-  ft: d => { const m = M().find(x => x.id === d.id); if (!m) return; if (m.stage !== "league" && m.ga === m.gb && !m.pens) return;
-    m.done = true; ui.openMatch = null; advance(); commit("fifa"); const ch = champion(); if (ch) toast(nm(ch) + " wins the tournament!"); },
-  reopen: d => { const m = M().find(x => x.id === d.id); if (m) { m.done = false; ui.openMatch = m.id; commit("fifa"); } },
-  open: d => { ui.openMatch = ui.openMatch === d.id ? null : d.id; render(); },
-  confirm: d => { if (ui.armed !== d.key) { ui.armed = d.key; render(); clearTimeout(ACT._t); ACT._t = setTimeout(() => { ui.armed = null; render(); }, 3000); return; }
+  login: d => setMe(d.id),
+  logout: () => setMe(null),
+  board: d => { ui.board = d.v; render(); },
+  kickoff: () => { const f = ui.form; if (!f.a || !f.b || f.a === f.b) return;
+    save("matches", uid(), { a: f.a, b: f.b, teamA: f.teamA.trim(), teamB: f.teamB.trim(), ga: 0, gb: 0, status: "live", stage: f.stage, round: f.stage === "knockout" ? f.round : "", pens: null, at: Date.now(), by: by() });
+    ui.form = Object.assign({}, f, { a: "", b: "", teamA: "", teamB: "" }); render(); toast("Kicked off"); },
+  goal: d => { const m = D.matches[d.id]; if (!m) return; const k = d.side === "a" ? "ga" : "gb"; const v = Math.max(0, m[k] + Number(d.d));
+    const patch = { [k]: v }; const ga = k === "ga" ? v : m.ga, gb = k === "gb" ? v : m.gb; if (ga !== gb) patch.pens = null; upd("matches", d.id, patch); },
+  pens: d => upd("matches", d.id, { pens: d.w }),
+  ft: d => { const m = D.matches[d.id]; if (!m || (m.stage === "knockout" && m.ga === m.gb && !m.pens)) return;
+    upd("matches", d.id, { status: "done", endedAt: Date.now(), doneBy: by() }); const w = winner(D.matches[d.id]); toast(w ? nm(w) + " wins" : "Draw recorded"); },
+  edit: d => { ui.edit = ui.edit === d.id ? null : d.id; render(); },
+  doneedit: () => { ui.edit = null; render(); toast("Result saved"); },
+  buyin: d => { save("buyins", uid(), { player: d.id, amount: settings().buyIn, at: Date.now(), by: by() }); },
+  custom: d => { ui.custom[d.id] = { v: "" }; render(); const el = document.getElementById("cu-" + d.id); el && el.focus(); },
+  addcustom: d => { const v = Number((ui.custom[d.id] || {}).v); delete ui.custom[d.id];
+    if (v > 0) save("buyins", uid(), { player: d.id, amount: v, at: Date.now(), by: by() }); else render(); },
+  seat: () => { const el = document.getElementById("addp"); if (el && el.value) upd("players", el.value, { poker: true }); },
+  addp: () => { const id = uid(); save("players", id, newPlayer("")); const el = document.getElementById("pn-" + id); el && el.focus(); },
+  rmp: d => save("players", d.id, null),
+  tog: d => { const p = D.players[d.id]; if (p) upd("players", d.id, { [d.k]: !p[d.k] }); },
+  addgroup: () => { const id = uid(); save("groups", id, { name: "Group " + String.fromCharCode(65 + G().length % 26), at: Date.now() }); },
+  rmgroup: d => { save("groups", d.id, null); P().filter(p => p.group === d.id).forEach(p => upd("players", p.id, { group: "" })); },
+  confirm: d => { const k = d.key;
+    if (ui.armed !== k) { ui.armed = k; render(); clearTimeout(ACT._t); ACT._t = setTimeout(() => { ui.armed = null; render(); }, 3000); return; }
     ui.armed = null; clearTimeout(ACT._t);
-    if (d.key === "reset-poker") { const keep = S.poker; S.poker = DEF.poker(); ["mode", "currency", "buyIn", "chips", "payout"].forEach(k => S.poker[k] = keep[k]); S.poker.timer.minutes = keep.timer.minutes; commit("poker"); toast("Poker game reset"); }
-    if (d.key === "reset-timer") { const t = S.poker.timer; t.running = false; t.elapsed = 0; commit("poker"); }
-    if (d.key === "gen") { ACT.gen(); toast("New schedule drawn"); } }
+    if (k.startsWith("delm-")) { save("matches", k.slice(5), null); ui.edit = null; toast("Match removed"); }
+    else if (k.startsWith("delb-")) { save("buyins", k.slice(5), null); }
+    else if (k.startsWith("undo-")) { const id = k.slice(5), last = buyins().filter(b => b.player === id).pop(); if (last) save("buyins", last.id, null); toast("Last buy-in removed"); }
+    else if (k === "clr-m") { Object.keys(D.matches).forEach(id => save("matches", id, null)); toast("FIFA results cleared"); }
+    else if (k === "clr-b") { Object.keys(D.buyins).forEach(id => save("buyins", id, null)); Object.keys(D.cashouts).forEach(id => save("cashouts", id, null)); toast("Buy-ins cleared"); }
+    else render(); }
 };
 
 document.addEventListener("click", e => {
@@ -577,34 +484,32 @@ document.addEventListener("click", e => {
   const b = e.target.closest("[data-act]"); if (!b || b.disabled) return;
   const fn = ACT[b.dataset.act]; if (fn) fn(b.dataset);
 });
+document.addEventListener("submit", e => { if (e.target.id !== "join") return; e.preventDefault();
+  const name = document.getElementById("join-name").value.trim().slice(0, 30); if (!name) return;
+  const existing = P().find(p => (p.name || "").toLowerCase() === name.toLowerCase());
+  if (existing) return setMe(existing.id);
+  const id = uid(); save("players", id, newPlayer(name)); setMe(id); });
 document.addEventListener("input", e => {
-  const el = e.target, k = el.dataset.input; if (!k) return;
-  if (k === "pname" || k === "pteam") { const p = byId(el.dataset.id); if (!p) return; p[k === "pname" ? "name" : "team"] = el.value.slice(0, 40); commitSoon("players"); }
-  if (k === "cashout") { const e2 = entry(el.dataset.id); e2.cashOut = el.value === "" ? null : Math.max(0, Number(el.value)); S.poker.entries[el.dataset.id] = e2; commitSoon("poker"); }
-  if (k === "pk" && el.tagName === "INPUT") { const key = el.dataset.k; if (key === "currency") S.poker.currency = el.value.slice(0, 3);
-    else { const v = Number(el.value); if (v > 0) S.poker[key] = v; } commitSoon("poker"); }
+  const el = e.target, k = el.dataset.input, id = el.dataset.id; if (!k) return;
+  if (k === "form") { const f = ui.form, key = el.dataset.k; f[key] = el.value;
+    if (key === "a" || key === "b") { const p = player(el.value); f[key === "a" ? "teamA" : "teamB"] = p && p.team ? p.team : ""; }
+    if (el.tagName === "SELECT") render(); return; }
+  if (k === "custom") { ui.custom[id] = { v: el.value }; return; }
+  if (k === "pname" || k === "pteam" || k === "gname") { const col = k === "gname" ? "groups" : "players", field = k === "pteam" ? "team" : "name";
+    const cur = D[col][id]; if (!cur) return; const key = col + "/" + id; D[col][id] = TYPING[key] = Object.assign({}, cur, { [field]: el.value.slice(0, 30) });
+    later(k + id, () => { const doc = TYPING[key]; delete TYPING[key]; if (D[col][id]) save(col, id, doc); }); return; }
+  if (k === "cashout") { later("co" + id, () => { const v = el.value.trim(); save("cashouts", id, v === "" ? null : { amount: Math.max(0, Number(v)), at: Date.now(), by: by() }); }); return; }
+  if (k === "setting") { const key = el.dataset.k; later("set" + key, () => { const s = settings(); const v = key === "currency" ? el.value.slice(0, 3) : Number(el.value);
+    if (key !== "currency" && !(v > 0)) return; save("settings", "main", Object.assign({}, s, { [key]: v })); }); }
 });
-document.addEventListener("change", e => {
-  const el = e.target, k = el.dataset.input; if (!k) return;
-  if (k === "pk" && el.tagName === "SELECT") { S.poker[el.dataset.k] = el.value; commit("poker"); }
-  if (k === "pkmin") { const t = S.poker.timer, lvl = Math.floor(tElapsed() / levelMs()); t.minutes = Number(el.value); t.elapsed = lvl * levelMs(); t.startedAt = Date.now(); commit("poker"); }
-  if (k === "ff") { S.fifa[el.dataset.k] = el.dataset.k === "playoff" ? el.value : Number(el.value); commit("fifa"); }
-  if (k === "pname" || k === "pteam" || k === "cashout" || (k === "pk" && el.tagName === "INPUT")) commit(k === "cashout" || k === "pk" ? "poker" : "players");
-});
-
-/* keep the screen on while the poker clock is open */
-let lock = null;
-async function wake() { try { if (!lock && navigator.wakeLock) { lock = await navigator.wakeLock.request("screen"); lock.addEventListener("release", () => { lock = null; }); } } catch (e) {} }
-document.addEventListener("visibilitychange", () => { if (document.visibilityState === "visible" && S.poker.timer.running) wake(); });
+document.addEventListener("change", e => { const el = e.target;
+  if (el.dataset.input === "pgroup") upd("players", el.dataset.id, { group: el.value }); });
 
 /* ---------- boot ---------- */
 render();
 if (window.claude && typeof window.claude.use === "function") {
-  window.claude.use("db").then(d => {
-    ready = true;
-    if (d) { db = d; live = true; subscribe(); } else { loadLocal(); }
-    render();
-  }).catch(() => { ready = true; loadLocal(); render(); });
+  window.claude.use("db").then(d => { if (d) { db = d; live = true; subscribe(); setTimeout(() => { if (!ready) { ready = true; render(); } }, 4000); } else { ready = true; loadLocal(); } render(); })
+    .catch(() => { ready = true; loadLocal(); render(); });
 } else { ready = true; loadLocal(); render(); }
 })();
 </script>
