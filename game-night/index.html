@@ -86,6 +86,13 @@ label.f{display:grid;gap:4px;font-size:12px;font-weight:600;color:var(--muted);l
 .li .name small{display:block;font-weight:400;color:var(--muted);font-size:12px}
 .chips{display:inline-flex;gap:3px;flex-wrap:wrap;max-width:120px}
 .chip{width:12px;height:12px;border-radius:50%;background:var(--felt);border:2px dashed var(--on-felt);box-shadow:0 0 0 1px var(--felt)}
+.cs{display:grid;gap:6px}
+.csr{display:grid;grid-template-columns:auto minmax(0,1fr) auto auto;gap:10px;align-items:center;padding:6px 0;border-top:1px solid var(--line)}
+.csr:first-child{border-top:0}
+.sw{width:28px;height:28px;border-radius:50%;border:3px dashed rgba(255,255,255,.75);box-shadow:0 0 0 1px var(--line),inset 0 0 0 2px rgba(0,0,0,.12);flex:none}
+.counter{flex-basis:100%;background:var(--sunk);border:1px solid var(--line);border-radius:var(--r);padding:12px;display:grid;gap:4px}
+.counter .csr input{width:84px}
+.ctotal{font-family:var(--display);font-weight:800;font-size:28px;line-height:1}
 .money{font-weight:700;font-variant-numeric:tabular-nums}
 .pos{color:var(--ok)} .neg{color:var(--red)}
 .place{font-family:var(--display);font-weight:800;font-size:20px;min-width:28px}
@@ -213,13 +220,23 @@ const player = id => D.players[id];
 const nm = id => { const p = player(id); return p ? (p.name || "Unnamed") : "Removed player"; };
 const groupOf = id => { const p = player(id); return p && p.group && D.groups[p.group] ? p.group : ""; };
 const gname = gid => (D.groups[gid] && D.groups[gid].name) || "Group";
-const settings = () => Object.assign({ currency: "$", buyIn: 20 }, D.settings.main || {});
+const DEFAULT_CHIPS = [
+  { name: "White", value: 0.05, stack: 10, color: "#f4f4f1" },
+  { name: "Red", value: 0.10, stack: 10, color: "#c8322b" },
+  { name: "Green", value: 0.25, stack: 14, color: "#1f8a4c" },
+  { name: "Blue", value: 1, stack: 10, color: "#2753c9" },
+  { name: "Purple", value: 5, stack: 1, color: "#6e3bb5" }];
+const settings = () => { const s = Object.assign({ currency: "$", buyIn: 20 }, D.settings.main || {});
+  s.chips = Array.isArray(s.chips) && s.chips.length ? s.chips : DEFAULT_CHIPS; return s; };
+const stackValue = () => settings().chips.reduce((t, c) => t + c.value * c.stack, 0);
+const stackCount = () => settings().chips.reduce((t, c) => t + c.stack, 0);
+const r2 = v => Math.round(v * 100) / 100;
 const money = v => { const n = Math.round(v * 100) / 100; return (n < 0 ? "−" : "") + settings().currency + Math.abs(n).toFixed(n % 1 ? 2 : 0); };
 const clock = t => t ? new Date(t).toLocaleTimeString([], { hour: "numeric", minute: "2-digit" }) : "";
 const ordinal = n => n + (n % 10 === 1 && n % 100 !== 11 ? "st" : n % 10 === 2 && n % 100 !== 12 ? "nd" : n % 10 === 3 && n % 100 !== 13 ? "rd" : "th");
 
 /* identity: pick your name, remembered on this device */
-const ui = { tab: "live", armed: null, edit: null, board: "fifa", form: { a: "", b: "", teamA: "", teamB: "", stage: "group", round: "Semi-final" }, custom: {} };
+const ui = { tab: "live", armed: null, edit: null, board: "fifa", form: { a: "", b: "", teamA: "", teamB: "", stage: "group", round: "Semi-final" }, custom: {}, count: {} };
 let me = null;
 try { me = localStorage.getItem("gn-me"); const t = localStorage.getItem("gn-tab2"); if (t) ui.tab = t; } catch (e) {}
 if (/^#(live|poker|board|setup)$/.test(location.hash)) ui.tab = location.hash.slice(1);
@@ -352,6 +369,16 @@ function viewPoker() {
     ${others.length ? `<div class="row" style="margin-top:10px"><select id="addp" aria-label="Add a player to the table" style="width:auto;flex:1 1 160px">${opts(others, "", "Add someone to the table…")}</select><button class="btn" data-act="seat" id="seat-go">Add</button></div>` : ""}
     <div class="row small muted" style="margin-top:12px">Standard buy-in <input type="number" inputmode="decimal" min="1" id="s-buy" data-input="setting" data-k="buyIn" value="${s.buyIn}" style="width:90px"> currency <input type="text" id="s-cur" data-input="setting" data-k="currency" value="${esc(s.currency)}" maxlength="3" style="width:64px"></div>
   </section>
+  <section class="panel"><h2>Chip set <span class="tag poker">${stackCount()} chips = ${money(stackValue())}</span></h2>
+    <p class="small muted" style="margin-top:0">Hand each standard buy-in this stack:</p>
+    <div class="cs">${s.chips.map(c => `<div class="csr"><span class="sw" style="background:${esc(c.color)}"></span><span><b>${esc(c.name)}</b> <span class="muted">${money(c.value)}</span></span><b class="num">× ${c.stack}</b><span class="money" style="min-width:60px;text-align:right">${money(c.value * c.stack)}</span></div>`).join("")}</div>
+    ${Math.abs(stackValue() - s.buyIn) > 0.005 ? `<p class="small neg">This stack is worth ${money(stackValue())} but the standard buy-in is ${money(s.buyIn)}. Adjust one of them.</p>` : ""}
+    <details style="margin-top:10px"><summary class="small">Edit chip values</summary>
+      <div class="cs" style="margin-top:8px">${s.chips.map((c, i) => `<div class="csr" style="grid-template-columns:auto minmax(0,1fr) 90px 80px"><span class="sw" style="background:${esc(c.color)}"></span><b>${esc(c.name)}</b>
+        <label class="f">Value<input type="number" inputmode="decimal" min="0" step="0.05" id="cv-${i}" data-input="chipset" data-i="${i}" data-k="value" value="${c.value}"></label>
+        <label class="f">Per stack<input type="number" inputmode="numeric" min="0" id="cs-${i}" data-input="chipset" data-i="${i}" data-k="stack" value="${c.stack}"></label></div>`).join("")}</div>
+    </details>
+  </section>
   <section class="panel"><h2>Buy-in log</h2>
     ${log.length ? `<div class="list">${log.slice(0, 40).map(b => `<div class="li"><span class="name">${esc(nm(b.player))}<small>${clock(b.at)} · recorded by ${esc(b.by === "guest" || !b.by ? "a guest" : nm(b.by))}</small></span><b class="money">${money(b.amount)}</b>${confirmBtn("delb-" + b.id, "Remove", "sm danger")}</div>`).join("")}</div>` : `<p class="muted">Every buy-in is logged here with the time and who recorded it.</p>`}
   </section>
@@ -359,12 +386,23 @@ function viewPoker() {
     <p class="small muted" style="margin-top:0">Enter what each player walks away with. Settle-up appears once everyone who bought in has a number.</p>
     <div class="list">${ids.map(id => `<div class="li"><span class="name">${esc(nm(id))}<small>Paid in ${money(paidIn(id))}</small></span>
       <input type="number" inputmode="decimal" min="0" placeholder="Cash out" id="co-${id}" data-input="cashout" data-id="${id}" value="${cashOut(id) == null ? "" : esc(cashOut(id))}" style="width:120px">
-      ${cashOut(id) != null ? `<b class="money ${cashOut(id) - paidIn(id) > 0.005 ? "pos" : cashOut(id) - paidIn(id) < -0.005 ? "neg" : ""}" style="min-width:64px;text-align:right">${cashOut(id) - paidIn(id) > 0.005 ? "+" : ""}${money(cashOut(id) - paidIn(id))}</b>` : `<span style="min-width:64px"></span>`}</div>`).join("")}</div>
+      <button class="btn sm" data-act="count" data-id="${id}" id="cc-${id}">${ui.count[id] ? "Close" : "Count chips"}</button>
+      ${cashOut(id) != null ? `<b class="money ${cashOut(id) - paidIn(id) > 0.005 ? "pos" : cashOut(id) - paidIn(id) < -0.005 ? "neg" : ""}" style="min-width:64px;text-align:right">${cashOut(id) - paidIn(id) > 0.005 ? "+" : ""}${money(cashOut(id) - paidIn(id))}</b>` : `<span style="min-width:64px"></span>`}
+      ${ui.count[id] ? counterHTML(id) : ""}</div>`).join("")}</div>
     ${outs.length ? `<p class="small ${Math.abs(outTotal - total) > 0.005 && allOut ? "neg" : "muted"}">Cashed out ${money(outTotal)} of ${money(total)} in the pot${allOut && Math.abs(outTotal - total) > 0.005 ? `. That's ${money(Math.abs(outTotal - total))} ${outTotal > total ? "too much" : "missing"}, so recount before settling.` : "."}</p>` : ""}
     ${allOut ? (() => { const st = settle(nets); return `<h3>Settle up</h3>${st.length ? `<div class="list">${st.map(t => `<div class="li"><span class="name">${esc(nm(t.from))} <span class="muted">pays</span> ${esc(nm(t.to))}</span><b class="money">${money(t.v)}</b></div>`).join("")}</div>` : `<p class="muted">Everyone's square.</p>`}`; })() : ""}
   </section>`;
 }
 
+function counterHTML(id) {
+  const chips = settings().chips, cnt = ui.count[id];
+  const total = r2(chips.reduce((t, c, i) => t + c.value * (Number(cnt[i]) || 0), 0));
+  return `<div class="counter"><div class="small muted">How many of each colour does ${esc(nm(id))} have?</div>
+    ${chips.map((c, i) => `<div class="csr"><span class="sw" style="background:${esc(c.color)}"></span><span><b>${esc(c.name)}</b> <span class="muted">${money(c.value)}</span></span>
+      <input type="number" inputmode="numeric" min="0" id="n-${id}-${i}" data-input="cnt" data-id="${id}" data-i="${i}" value="${esc(cnt[i] ?? "")}" placeholder="0" aria-label="${esc(c.name)} chips">
+      <span class="money" id="ns-${id}-${i}" style="min-width:60px;text-align:right">${money(c.value * (Number(cnt[i]) || 0))}</span></div>`).join("")}
+    <div class="spread" style="margin-top:6px"><span class="ctotal" id="ct-${id}">${money(total)}</span><button class="btn felt" data-act="usecount" data-id="${id}" id="uc-${id}">Save as cash-out</button></div></div>`;
+}
 function fifaTable(t, cls) {
   return `<div class="tbl"><table><thead><tr><th>#</th><th>Player</th><th>P</th><th>W</th><th>D</th><th>L</th><th class="wide">GF</th><th class="wide">GA</th><th>GD</th><th>Pts</th></tr></thead><tbody>
     ${t.map((r, i) => `<tr class="${i === 0 && r.p ? "top1" : ""}"><td>${i + 1}</td><td>${esc(nm(r.id))}</td><td>${r.p}</td><td>${r.w}</td><td>${r.d}</td><td>${r.l}</td><td class="wide">${r.gf}</td><td class="wide">${r.ga}</td><td>${r.gf - r.ga > 0 ? "+" : ""}${r.gf - r.ga}</td><td><b>${r.pts}</b></td></tr>`).join("")}
@@ -434,7 +472,7 @@ function render() {
     : ui.tab === "poker" ? viewPoker() : ui.tab === "board" ? viewBoard() : ui.tab === "setup" ? viewSetup() : viewLive();
   if (aid) { const el = document.getElementById(aid); if (el && el !== document.activeElement) { el.focus({ preventScroll: true }); try { if (sel) el.setSelectionRange(sel[0], sel[1]); } catch (e) {} } }
 }
-function toast(msg) { const t = document.createElement("div"); t.className = "toast"; t.textContent = msg; document.body.appendChild(t); setTimeout(() => t.remove(), 3200); }
+function toast(msg) { document.querySelectorAll(".toast").forEach(x => x.remove()); const t = document.createElement("div"); t.className = "toast"; t.textContent = msg; document.body.appendChild(t); setTimeout(() => t.remove(), 3200); }
 
 /* ---------- actions ---------- */
 const by = () => me || "guest";
@@ -458,7 +496,12 @@ const ACT = {
     upd("matches", d.id, { status: "done", endedAt: Date.now(), doneBy: by() }); const w = winner(D.matches[d.id]); toast(w ? nm(w) + " wins" : "Draw recorded"); },
   edit: d => { ui.edit = ui.edit === d.id ? null : d.id; render(); },
   doneedit: () => { ui.edit = null; render(); toast("Result saved"); },
-  buyin: d => { save("buyins", uid(), { player: d.id, amount: settings().buyIn, at: Date.now(), by: by() }); },
+  buyin: d => { const s = settings(); save("buyins", uid(), { player: d.id, amount: s.buyIn, at: Date.now(), by: by() });
+    toast("Give " + nm(d.id) + ": " + s.chips.filter(c => c.stack).map(c => c.stack + " " + c.name.toLowerCase()).join(", ")); },
+  count: d => { if (ui.count[d.id]) delete ui.count[d.id]; else { const prev = D.cashouts[d.id] && D.cashouts[d.id].counts; ui.count[d.id] = Array.isArray(prev) ? prev.slice() : []; } render(); },
+  usecount: d => { const chips = settings().chips, cnt = ui.count[d.id] || [];
+    const amount = r2(chips.reduce((t, c, i) => t + c.value * (Number(cnt[i]) || 0), 0));
+    save("cashouts", d.id, { amount, counts: chips.map((c, i) => Number(cnt[i]) || 0), at: Date.now(), by: by() }); delete ui.count[d.id]; render(); toast(nm(d.id) + " cashes out " + money(amount)); },
   custom: d => { ui.custom[d.id] = { v: "" }; render(); const el = document.getElementById("cu-" + d.id); el && el.focus(); },
   addcustom: d => { const v = Number((ui.custom[d.id] || {}).v); delete ui.custom[d.id];
     if (v > 0) save("buyins", uid(), { player: d.id, amount: v, at: Date.now(), by: by() }); else render(); },
@@ -495,6 +538,12 @@ document.addEventListener("input", e => {
     if (key === "a" || key === "b") { const p = player(el.value); f[key === "a" ? "teamA" : "teamB"] = p && p.team ? p.team : ""; }
     if (el.tagName === "SELECT") render(); return; }
   if (k === "custom") { ui.custom[id] = { v: el.value }; return; }
+  if (k === "cnt") { const i = Number(el.dataset.i), chips = settings().chips, cnt = ui.count[id]; if (!cnt) return; cnt[i] = el.value;
+    const sub = document.getElementById("ns-" + id + "-" + i); if (sub) sub.textContent = money(chips[i].value * (Number(el.value) || 0));
+    const tot = document.getElementById("ct-" + id); if (tot) tot.textContent = money(r2(chips.reduce((t, c, j) => t + c.value * (Number(cnt[j]) || 0), 0))); return; }
+  if (k === "chipset") { const i = Number(el.dataset.i), key = el.dataset.k, v = Number(el.value); if (!(v >= 0) || el.value === "") return;
+    later("chip" + i + key, () => { const s = settings(); const chips = s.chips.map((c, j) => j === i ? Object.assign({}, c, { [key]: v }) : c);
+      save("settings", "main", Object.assign({}, s, { chips })); }); return; }
   if (k === "pname" || k === "pteam" || k === "gname") { const col = k === "gname" ? "groups" : "players", field = k === "pteam" ? "team" : "name";
     const cur = D[col][id]; if (!cur) return; const key = col + "/" + id; D[col][id] = TYPING[key] = Object.assign({}, cur, { [field]: el.value.slice(0, 30) });
     later(k + id, () => { const doc = TYPING[key]; delete TYPING[key]; if (D[col][id]) save(col, id, doc); }); return; }
