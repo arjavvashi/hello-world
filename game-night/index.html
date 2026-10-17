@@ -151,6 +151,8 @@ label.f{display:grid;gap:4px;font-size:12px;font-weight:600;color:var(--muted);l
 .seg{display:inline-flex;border:1px solid var(--line);border-radius:8px;overflow:hidden}
 .seg button{border:0;background:var(--surface);padding:8px 14px;font-weight:700;cursor:pointer;color:var(--muted)}
 .seg button[aria-pressed="true"]{background:var(--ink);color:var(--bg)}
+.banner{margin-top:10px;border-radius:8px;padding:10px 12px;font-size:13px;font-weight:600;border:1px solid var(--red);color:var(--ink);background:var(--surface)}
+.banner b{color:var(--red)}
 .toast{position:fixed;left:50%;bottom:calc(16px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:8px;font-weight:600;font-size:14px;z-index:20;max-width:calc(100% - 32px)}
 </style>
 
@@ -160,6 +162,7 @@ label.f{display:grid;gap:4px;font-size:12px;font-weight:600;color:var(--muted);l
       <div class="brand">Game <b>♠︎</b> Night</div>
       <div class="who"><span class="sync" id="sync">Connecting…</span><button class="me" id="me-btn" data-act="logout" hidden></button></div>
     </div>
+    <div class="banner" id="banner" hidden></div>
     <nav class="tabs" role="tablist" id="tabs">
       <button role="tab" data-tab="live" id="tab-live">Live FIFA</button>
       <button role="tab" data-tab="poker" id="tab-poker">Poker</button>
@@ -176,7 +179,7 @@ label.f{display:grid;gap:4px;font-size:12px;font-weight:600;color:var(--muted);l
 /* ---------- store: one record per player, group, buy-in, cash-out and match ---------- */
 const COLS = ["players", "groups", "buyins", "cashouts", "matches", "settings"];
 let D = {}; COLS.forEach(c => { D[c] = {}; });
-let db = null, live = false, ready = false;
+let db = null, live = false, ready = false, access = "local"; // write | read | none | local
 const Q = {}; // pending writes per record: {running, next, local}
 const TYPING = {}; // records being typed into, not yet saved
 
@@ -195,7 +198,8 @@ async function pump(k, col, id) {
   while (e.next !== undefined) {
     const doc = e.next; e.next = undefined; e.running = true;
     try { const ref = db.collection(col).doc(id); if (doc) await ref.set(JSON.parse(JSON.stringify(doc))); else await ref.delete(); }
-    catch (err) { toast(err && (err.code === "permission_denied" || err.code === "not_granted") ? "You can view but not edit. Ask the host to share edit access." : err && err.code === "quota_exceeded" ? "Storage is full. Clear old results in Players & groups." : "Couldn't save. Check your connection and try again."); }
+    catch (err) { if (err && ["permission_denied", "not_granted", "invalid_argument"].includes(err.code)) access = "read";
+      toast(err && (err.code === "permission_denied" || err.code === "not_granted" || err.code === "invalid_argument") ? "You can view but not edit. Ask the host to share edit access." : err && err.code === "quota_exceeded" ? "Storage is full. Clear old results in Players & groups." : "Couldn't save. Check your connection and try again."); }
     e.running = false;
   }
   delete Q[k];
@@ -462,6 +466,10 @@ function render() {
   const sync = document.getElementById("sync");
   sync.textContent = !ready ? "Connecting…" : live ? "Live" : "This device only";
   sync.className = "sync" + (live ? " live" : "");
+  const ban = document.getElementById("banner");
+  ban.hidden = !ready || !(access === "read" || access === "none");
+  ban.innerHTML = access === "read" ? "<b>View only.</b> You can follow along, but what you enter won't be saved for everyone. Ask the host to invite you by email as an Editor."
+    : access === "none" ? "<b>Not connected.</b> Sign in to Claude and ask the host to invite you, then reopen this page. Anything you enter now stays on this phone only." : "";
   const meBtn = document.getElementById("me-btn"), meOk = me === "guest" || (me && player(me));
   meBtn.hidden = !ready || !meOk; meBtn.textContent = me === "guest" ? "Guest · switch" : meOk ? nm(me) + " · switch" : "";
   document.getElementById("tabs").hidden = !meOk;
@@ -557,8 +565,11 @@ document.addEventListener("change", e => { const el = e.target;
 /* ---------- boot ---------- */
 render();
 if (window.claude && typeof window.claude.use === "function") {
-  window.claude.use("db").then(d => { if (d) { db = d; live = true; subscribe(); setTimeout(() => { if (!ready) { ready = true; render(); } }, 4000); } else { ready = true; loadLocal(); } render(); })
-    .catch(() => { ready = true; loadLocal(); render(); });
+  Promise.all([window.claude.use("db"), window.claude.use("user").catch(() => null)]).then(async ([d, u]) => {
+    if (d) { db = d; live = true; let can = null; try { can = u ? await u.can("data.write") : null; } catch (e) {}
+      access = can === false ? "read" : "write"; subscribe(); setTimeout(() => { if (!ready) { ready = true; render(); } }, 4000); }
+    else { access = "none"; ready = true; loadLocal(); }
+    render(); }).catch(() => { access = "none"; ready = true; loadLocal(); render(); });
 } else { ready = true; loadLocal(); render(); }
 })();
 </script>
