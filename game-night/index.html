@@ -221,11 +221,11 @@ const nm = id => { const p = player(id); return p ? (p.name || "Unnamed") : "Rem
 const groupOf = id => { const p = player(id); return p && p.group && D.groups[p.group] ? p.group : ""; };
 const gname = gid => (D.groups[gid] && D.groups[gid].name) || "Group";
 const DEFAULT_CHIPS = [
-  { name: "White", value: 0.05, stack: 10, color: "#f4f4f1" },
-  { name: "Red", value: 0.10, stack: 10, color: "#c8322b" },
-  { name: "Green", value: 0.25, stack: 14, color: "#1f8a4c" },
-  { name: "Blue", value: 1, stack: 10, color: "#2753c9" },
-  { name: "Purple", value: 5, stack: 1, color: "#6e3bb5" }];
+  { name: "White", value: 0.10, stack: 10, color: "#eef0f4" },
+  { name: "Red", value: 0.20, stack: 10, color: "#e04a2f" },
+  { name: "Green", value: 0.50, stack: 4, color: "#1f7a43" },
+  { name: "Purple", value: 1, stack: 10, color: "#7a2142" },
+  { name: "Blue", value: 5, stack: 1, color: "#24348f" }];
 const settings = () => { const s = Object.assign({ currency: "$", buyIn: 20 }, D.settings.main || {});
   s.chips = Array.isArray(s.chips) && s.chips.length ? s.chips : DEFAULT_CHIPS; return s; };
 const stackValue = () => settings().chips.reduce((t, c) => t + c.value * c.stack, 0);
