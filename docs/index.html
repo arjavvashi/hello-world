@@ -155,6 +155,7 @@ label.f{display:grid;gap:4px;font-size:12px;font-weight:600;color:var(--muted);l
 .seg button[aria-pressed="true"]{background:var(--ink);color:var(--bg)}
 .banner{margin-top:10px;border-radius:8px;padding:10px 12px;font-size:13px;font-weight:600;border:1px solid var(--red);color:var(--ink);background:var(--surface)}
 .banner b{color:var(--red)}
+.errline{margin-top:8px;font-size:12px;font-weight:600;color:var(--red);overflow-wrap:anywhere}
 .toast{position:fixed;left:50%;bottom:calc(16px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:8px;font-weight:600;font-size:14px;z-index:20;max-width:calc(100% - 32px)}
 </style>
 </head>
@@ -165,6 +166,7 @@ label.f{display:grid;gap:4px;font-size:12px;font-weight:600;color:var(--muted);l
       <div class="brand">Game <b>♠︎</b> Night</div>
       <div class="who"><span class="sync" id="sync">Connecting…</span><button class="me" id="share-btn" data-act="share" hidden>Share link</button><button class="me" id="me-btn" data-act="logout" hidden></button></div>
     </div>
+    <div class="errline" id="errline" hidden></div>
     <nav class="tabs" role="tablist" id="tabs">
       <button role="tab" data-tab="live" id="tab-live">Live FIFA</button>
       <button role="tab" data-tab="poker" id="tab-poker">Poker</button>
@@ -183,7 +185,7 @@ const COLS = ["players", "groups", "buyins", "cashouts", "matches", "settings"];
 let D = {}; COLS.forEach(c => { D[c] = {}; });
 const API = "https://jsonblob.com/api/jsonBlob";
 let blobId = (location.hash.match(/g=([A-Za-z0-9_-]+)/) || [])[1] || null;
-let live = false, ready = false, lastErr = 0, pending = [], syncing = false;
+let live = false, ready = false, lastErr = 0, pending = [], syncing = false, errText = "";
 const TYPING = {}; // records being typed into, not yet saved
 const empty = () => { const o = {}; COLS.forEach(c => { o[c] = {}; }); return o; };
 const normalize = j => { const o = empty(); if (j && typeof j === "object") COLS.forEach(c => { if (j[c] && typeof j[c] === "object") o[c] = Object.assign({}, j[c]); }); return o; };
@@ -191,9 +193,11 @@ const applyOp = (t, op) => { if (op.doc) t[op.col][op.id] = op.doc; else delete 
 
 function persistLocal() { try { localStorage.setItem("gamenight2", JSON.stringify(D)); } catch (e) {} }
 async function pull() {
-  const r = await fetch(API + "/" + blobId, { headers: { Accept: "application/json" }, cache: "no-store" });
-  if (r.status === 404) { const e = new Error("gone"); e.gone = true; throw e; }
-  if (!r.ok) throw new Error("HTTP " + r.status);
+  let r;
+  try { r = await fetch(API + "/" + blobId + "?t=" + Date.now(), { headers: { Accept: "application/json" } }); }
+  catch (e) { throw new Error("Reading blocked (" + (e && e.message || "network") + ")"); }
+  if (r.status === 404) { const e = new Error("Reading failed: game night not found (404)"); e.gone = true; throw e; }
+  if (!r.ok) throw new Error("Reading failed: HTTP " + r.status);
   return normalize(await r.json());
 }
 function adopt(base) { // remote state + my unsent changes + what I'm typing
@@ -202,6 +206,7 @@ function adopt(base) { // remote state + my unsent changes + what I'm typing
   const changed = JSON.stringify(base) !== JSON.stringify(D); D = base; return changed;
 }
 function failed(e) {
+  errText = (e && e.message) || "unknown error";
   if (Date.now() - lastErr < 15000) return; lastErr = Date.now();
   toast(e && e.gone ? "This game night link no longer works. Start a new one." : "Can't reach the shared storage. Changes will retry.");
 }
@@ -210,16 +215,18 @@ async function flush() { // read latest, apply my changes on top, write back
   syncing = true; const n = pending.length;
   try {
     const base = await pull(); pending.slice(0, n).forEach(op => applyOp(base, op));
-    const r = await fetch(API + "/" + blobId, { method: "PUT", headers: { "Content-Type": "application/json", Accept: "application/json" }, body: JSON.stringify(base) });
-    if (!r.ok) throw new Error("HTTP " + r.status);
-    pending = pending.slice(n); adopt(base); live = true;
+    let r;
+    try { r = await fetch(API + "/" + blobId, { method: "PUT", headers: { "Content-Type": "application/json", Accept: "application/json" }, body: JSON.stringify(base) }); }
+    catch (e) { throw new Error("Saving blocked (" + (e && e.message || "network") + ")"); }
+    if (!r.ok) throw new Error("Saving failed: HTTP " + r.status);
+    pending = pending.slice(n); adopt(base); live = true; errText = "";
   } catch (e) { live = false; failed(e); }
   syncing = false; render();
   if (pending.length) setTimeout(flush, live ? 50 : 3000);
 }
 async function poll() {
   if (!blobId || syncing || document.hidden) return;
-  try { const base = await pull(); if (syncing) return; const ch = adopt(base); const first = !ready; live = true; ready = true; if (ch || first) render(); else renderStatus(); }
+  try { const base = await pull(); if (syncing) return; const ch = adopt(base); const first = !ready; live = true; ready = true; errText = ""; if (ch || first) render(); else renderStatus(); }
   catch (e) { live = false; ready = true; renderStatus(); failed(e); }
 }
 function save(col, id, doc) { // full-record write (doc = null deletes)
@@ -489,6 +496,9 @@ function renderStatus() {
   const sync = document.getElementById("sync");
   sync.textContent = !blobId ? "Not started" : !ready ? "Connecting…" : live ? (pending.length ? "Saving…" : "Live") : "Offline";
   sync.className = "sync" + (live && blobId ? " live" : "");
+  const er = document.getElementById("errline");
+  er.hidden = !blobId || live || !errText;
+  er.textContent = "Sync problem: " + errText + (blobId ? " · game " + blobId : "");
 }
 function viewStart() {
   return `<section class="panel login">
